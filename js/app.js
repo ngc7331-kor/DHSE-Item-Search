@@ -172,20 +172,26 @@ function setupDropdowns() {
 
 function getInstantImgUrl(url) {
   if (!url) return '';
-  // Convert Drive 'uc?id=' link to 'lh3.googleusercontent.com/d/' for better embedding
-  // OR just use 'thumbnail' link which is also robust
   
-  if (url.includes('drive.google.com') && url.includes('id=')) {
-    try {
-      const idMatch = url.match(/id=([^&]+)/);
-      if (idMatch && idMatch[1]) {
-        // Use the /d/ endpoint which serves the image directly
-        // return 'https://lh3.googleusercontent.com/d/' + idMatch[1];
-        // safer fallback:
-        return 'https://drive.google.com/thumbnail?id=' + idMatch[1] + '&sz=w800';
-      }
-    } catch(e) { console.log(e); }
-  }
+  try {
+    let id = '';
+    // Pattern 1: id=...
+    if (url.includes('id=')) {
+      const match = url.match(/id=([^&]+)/);
+      if (match) id = match[1];
+    } 
+    // Pattern 2: /file/d/...
+    else if (url.includes('/file/d/')) {
+      const match = url.match(/\/file\/d\/([^\/]+)/);
+      if (match) id = match[1];
+    }
+
+    if (id) {
+      // Use thumbnail endpoint for reliability
+      return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w800';
+    }
+  } catch(e) { console.log(e); }
+
   return url;
 }
 
