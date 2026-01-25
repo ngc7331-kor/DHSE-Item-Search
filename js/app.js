@@ -29,10 +29,27 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 addBtn.addEventListener('click', (e) => {
-  addBtn.style.display = 'none';
+  addBtn.style.display = 'none'; // Hide button immediately to prevent double clicks
+  
+  if (!deferredPrompt) {
+    alert("앱 설치가 이미 되었거나, 현재 브라우저에서 지원하지 않을 수 있습니다.");
+    return;
+  }
+
   deferredPrompt.prompt();
+  
   deferredPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User accepted the A2HS prompt');
+    } else {
+      console.log('User dismissed the A2HS prompt');
+      addBtn.style.display = 'block'; // Show again if dismissed
+    }
     deferredPrompt = null;
+  }).catch(err => {
+    console.error(err);
+    alert("설치 창을 띄우는 중 오류가 발생했습니다.");
+    addBtn.style.display = 'block';
   });
 });
 
