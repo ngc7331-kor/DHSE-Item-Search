@@ -1,11 +1,11 @@
-const CACHE_NAME = "assist-items-v3";
+const CACHE_NAME = "assist-items-v4";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./js/app.js",
   "./js/data-manager.js",
-  "./icon-v3-192.png"
+  "./icon-v4-192.png"
 ];
 
 self.addEventListener("install", (e) => {
