@@ -1,6 +1,6 @@
 {
-  "name": "특수교육지원센터 물품검색",
-  "short_name": "물품검색",
+  "name": "동해특수교육지원센터 물품검색",
+  "short_name": "동해물품검색",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f3f4f6",
