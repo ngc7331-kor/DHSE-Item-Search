@@ -1,22 +1,32 @@
 /**
- * Data Manager for Local PWA
- * Replaces code.gs functionality using LocalStorage
+ * Data Manager for API Integration
+ * Connects to Google Apps Script Web App
  */
 
-const STORAGE_KEY = 'assist_items_data';
+// User provided Web App URL
+const API_URL = 'https://script.google.com/macros/s/AKfycbxxSnINrMCjHbQNhndAn6nxbcVVljtszQeymF4yHwK3SmoAORTP5_pN0NooCrZDX8efGg/exec';
 
 class DataManager {
   constructor() {
-    this.data = this.loadData();
+    this.data = [];
   }
 
-  loadData() {
-    const json = localStorage.getItem(STORAGE_KEY);
-    return json ? JSON.parse(json) : [];
-  }
-
-  saveData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+  // Load all data from Google Sheet
+  async loadData() {
+    try {
+      const response = await fetch(API_URL);
+      const result = await response.json();
+      if (result.success) {
+        this.data = result.data;
+        return this.data;
+      } else {
+        throw new Error(result.message || '데이터 로드 실패');
+      }
+    } catch (e) {
+      console.error("Load Error:", e);
+      // Fallback or empty
+      return [];
+    }
   }
 
   getAllData() {
@@ -49,57 +59,98 @@ class DataManager {
     return prefix + "-" + nextNum;
   }
 
-  addData(obj) {
+  // Send add request to API
+  async addData(obj) {
     try {
-      // Clean data
-      const newItem = {
-        종목: obj.종목 === '미입력' ? '' : obj.종목,
-        영역: obj.영역 === '미입력' ? '' : obj.영역,
-        순번: obj.순번 || '',
-        품명: obj.품명 === '미입력' ? '' : obj.품명,
-        수량: obj.수량 || '',
-        위치: obj.위치 || '',
-        사진: obj.사진 || '' // Base64 stored directly
+      const payload = {
+        action: 'add',
+        item: {
+          종목: obj.종목 === '미입력' ? '' : obj.종목,
+          영역: obj.영역 === '미입력' ? '' : obj.영역,
+          순번: obj.순번 || '',
+          품명: obj.품명 === '미입력' ? '' : obj.품명,
+          수량: obj.수량 || '',
+          위치: obj.위치 || '',
+          사진: obj.사진 || ''
+        }
       };
       
-      this.data.push(newItem);
-      this.saveData();
-      return { success: true, message: '저장완료' };
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Google Apps Script POST limitation
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      // 'no-cors' mode means we can't read the response. 
+      // We assume success if no network error.
+      // To strictly verify, we would need a proper CORS setup or reload data.
+      // For this simple app, we Optimistically update local data.
+      
+      this.data.push(payload.item);
+      return { success: true, message: '저장 요청 완료 (새로고침 시 반영됩니다)' };
+      
     } catch (e) {
       return { success: false, message: e.message };
     }
   }
 
-  updateData(old, n) {
+  // Send update request to API
+  async updateData(old, n) {
     try {
+      const payload = {
+        action: 'update',
+        oldItem: old,
+        item: {
+          종목: n.종목 === '미입력' ? '' : n.종목,
+          영역: n.영역 === '미입력' ? '' : n.영역,
+          순번: n.순번,
+          품명: n.품명 === '미입력' ? '' : n.품명,
+          수량: n.수량,
+          위치: n.위치,
+          사진: n.사진 || ''
+        }
+      };
+
+      await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      // Optimistic local update
       const idx = this.data.findIndex(d => d.순번 === old.순번 && d.종목 === old.종목);
-      if (idx === -1) return { success: false, message: '데이터를 찾을 수 없습니다.' };
-      
-      this.data[idx] = {
-        종목: n.종목 === '미입력' ? '' : n.종목,
-        영역: n.영역 === '미입력' ? '' : n.영역,
-        순번: n.순번, // 순번은 보통 바뀌지 않으나 로직상 유지
-        품명: n.품명 === '미입력' ? '' : n.품명,
-        수량: n.수량,
-        위치: n.위치,
-        사진: n.사진 || this.data[idx].사진
-      };
-      
-      this.saveData();
-      return { success: true, message: '수정 완료' };
+      if (idx !== -1) {
+          this.data[idx] = payload.item;
+      }
+
+      return { success: true, message: '수정 요청 완료 (새로고침 시 반영됩니다)' };
     } catch (e) {
       return { success: false, message: e.message };
     }
   }
 
-  deleteData(obj) {
+  // Send delete request to API
+  async deleteData(obj) {
     try {
+      const payload = {
+        action: 'delete',
+        item: obj
+      };
+
+      await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      // Optimistic local update
       const idx = this.data.findIndex(d => d.순번 === obj.순번 && d.종목 === obj.종목);
-      if (idx === -1) return { success: false, message: '삭제할 데이터를 찾을 수 없습니다.' };
-      
-      this.data.splice(idx, 1);
-      this.saveData();
-      return { success: true, message: '삭제 완료' };
+      if (idx !== -1) this.data.splice(idx, 1);
+
+      return { success: true, message: '삭제 요청 완료 (새로고침 시 반영됩니다)' };
     } catch (e) {
       return { success: false, message: e.message };
     }

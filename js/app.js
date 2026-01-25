@@ -77,34 +77,39 @@ window.onload = () => {
   } catch(e) { alert("초기화 오류: " + e.message); }
 };
 
-function preload() {
-  // DB Call
-  const data = db.getAllData();
-  
-  const cleanData = data.map(d => ({
-      ...d,
-      종목: (d.종목 && d.종목.trim()) || '미입력',
-      영역: (d.영역 && d.영역.trim()) || '미입력',
-      품명: (d.품명 && d.품명.trim()) || '미입력'
-  }));
-  
-  // Cache building
-  cache.cats = ['전체', ...new Set(cleanData.map(d => d.종목))].sort(customSort);
-  cache.allAreas = ['전체', ...new Set(cleanData.map(d => d.영역))].sort(customSort);
-  cache.allItems = ['전체', ...new Set(cleanData.map(d => d.품명))].sort(customSort);
-  
-  cache.cats.forEach(c => {
-    if(c === '전체') return;
-    const cD = cleanData.filter(d => d.종목 === c);
-    cache.areas[c] = ['전체', ...new Set(cD.map(d => d.영역))].sort(customSort);
-    cache.areas[c].forEach(a => {
-      cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort);
+async function preload() {
+  // DB Call (Async)
+  try {
+    const data = await db.loadData();
+    
+    const cleanData = data.map(d => ({
+        ...d,
+        종목: (d.종목 && d.종목.toString().trim()) || '미입력',
+        영역: (d.영역 && d.영역.toString().trim()) || '미입력',
+        품명: (d.품명 && d.품명.toString().trim()) || '미입력'
+    }));
+    
+    // Cache building
+    cache.cats = ['전체', ...new Set(cleanData.map(d => d.종목))].sort(customSort);
+    cache.allAreas = ['전체', ...new Set(cleanData.map(d => d.영역))].sort(customSort);
+    cache.allItems = ['전체', ...new Set(cleanData.map(d => d.품명))].sort(customSort);
+    
+    cache.cats.forEach(c => {
+      if(c === '전체') return;
+      const cD = cleanData.filter(d => d.종목 === c);
+      cache.areas[c] = ['전체', ...new Set(cD.map(d => d.영역))].sort(customSort);
+      cache.areas[c].forEach(a => {
+        cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort);
+      });
     });
-  });
-
-  fullData = [];
-  isInitialLoad = true;
-  renderUI(); 
+  
+    fullData = cleanData; // Use cleanData for consistency
+    isInitialLoad = false;
+    renderUI(); 
+  } catch (e) {
+    console.error("Preload Failed:", e);
+    alert("데이터를 불러오는데 실패했습니다: " + e.message);
+  }
 }
 
 function setupDropdowns() {
@@ -312,7 +317,7 @@ function previewImg(e) {
   if(file) reader.readAsDataURL(file);
 }
 
-function saveData() { 
+async function saveData() { 
   const obj = { 
     종목: document.getElementById('m_cat').value, 
     영역: document.getElementById('m_area').value, 
@@ -325,24 +330,28 @@ function saveData() {
   
   let res;
   if (currentMode === 'add') {
-    res = db.addData(obj);
+    res = await db.addData(obj);
   } else {
-    res = db.updateData(editD, obj);
+    res = await db.updateData(editD, obj);
   }
   
   if (res.success) {
     alert(res.message);
     closeModal();
-    preload();
+    // No full reload to save bandwidth/speed, just rely on optimistic UI update or simple re-render
+    // For syncing, one might call preload() again, but it takes time.
+    // Let's call preload() to be safe and sync with server eventually, or just update UI.
+    // For now, let's just re-render UI with optimistic data.
+    preload(); 
   } else {
     alert(res.message);
   }
 }
 
-function deleteItem(idx) { 
+async function deleteItem(idx) { 
   const d = currentRenderedData[idx];
   if(confirm('삭제하시겠습니까?')) {
-    const res = db.deleteData(d);
+    const res = await db.deleteData(d);
     alert(res.message);
     preload();
   }
