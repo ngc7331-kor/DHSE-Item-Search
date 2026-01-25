@@ -1,6 +1,6 @@
-const SHEET_ID = '1dhP06nEO0yzJnunjsBjy4NftYTNpb53Ne6bkE8ypG_Y';
+const SHEET_ID = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
 const SHEET_NAME = '목록';
-const ADMIN_EMAIL = 'taeoh0311@gmail.com';
+const ADMIN_EMAIL = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL');
 const DRIVE_FOLDER_NAME = '동해교육지원청 물품';
 const DRIVE_SUBFOLDER_NAME = '보조기기 사진들';
 
