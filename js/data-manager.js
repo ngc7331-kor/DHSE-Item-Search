@@ -24,6 +24,7 @@ class DataManager {
       }
     } catch (e) {
       console.error("Load Error:", e);
+      alert("데이터를 가져오는 중 오류가 발생했습니다.\n" + e.message + "\n\n(구글 앱스 스크립트 배포 권한 설정을 확인해주세요)");
       // Fallback or empty
       return [];
     }
