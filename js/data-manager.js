@@ -11,22 +11,59 @@ class DataManager {
     this.data = [];
   }
 
-  // Load all data from Google Sheet
+  // Load all data with Caching Strategy
   async loadData() {
+    // 1. Try to load from Cache first
+    const cached = localStorage.getItem('appData');
+    if (cached) {
+      try {
+        console.log("Loading from cache...");
+        this.data = JSON.parse(cached);
+        // We return existing data to let app render immediately.
+        // But we MUST check for updates in background.
+        this.fetchAndCache(); // Fire and forget (or handle via customized event if needed)
+        return this.data; 
+      } catch (e) {
+        console.error("Cache parse error", e);
+        localStorage.removeItem('appData');
+      }
+    }
+
+    // 2. If no cache, wait for fetch
+    return await this.fetchAndCache();
+  }
+
+  // Fetch from server and update cache
+  async fetchAndCache() {
     try {
+      console.log("Fetching from server...");
       const response = await fetch(API_URL);
       const result = await response.json();
       if (result.success) {
-        this.data = result.data;
+        // Only update if data changed (simple string comparison for equality check)
+        // For performance, we might just overwrite.
+        const newDataStr = JSON.stringify(result.data);
+        const oldDataStr = localStorage.getItem('appData');
+        
+        if (newDataStr !== oldDataStr) {
+            console.log("Data updated from server");
+            this.data = result.data;
+            localStorage.setItem('appData', newDataStr);
+            // Optionally dispatch event to tell app to re-render if it was already rendered
+            window.dispatchEvent(new CustomEvent('data-updated'));
+        }
         return this.data;
       } else {
         throw new Error(result.message || '데이터 로드 실패');
       }
     } catch (e) {
       console.error("Load Error:", e);
-      alert("데이터를 가져오는 중 오류가 발생했습니다.\n" + e.message + "\n\n(구글 앱스 스크립트 배포 권한 설정을 확인해주세요)");
-      // Fallback or empty
-      return [];
+      // If we have data (from cache), maybe just warn silently or show toast?
+      // If we have NO data, then alert.
+      if (this.data.length === 0) {
+        alert("데이터를 가져오는 중 오류가 발생했습니다.\n" + e.message);
+      }
+      return this.data; // Return whatever we have
     }
   }
 

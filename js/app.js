@@ -91,6 +91,12 @@ function customSort(a, b) {
 window.onload = () => { 
   try {
     preload(); setupDropdowns();
+    // Listen for background updates
+    window.addEventListener('data-updated', () => {
+        console.log("Background update detected, refreshing UI...");
+        preload(); // Re-run preload to update UI with new data
+        // Optionally show a toast message here specifically for "Data Updated"
+    });
   } catch(e) { alert("초기화 오류: " + e.message); }
 };
 
