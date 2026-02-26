@@ -132,6 +132,9 @@ async function preload() {
   } catch (e) {
     console.error("Preload Failed:", e);
     alert("데이터를 불러오는데 실패했습니다: " + e.message);
+  } finally {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
   }
 }
 

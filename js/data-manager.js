@@ -14,15 +14,11 @@ class DataManager {
   // Load all data with Caching Strategy
   async loadData() {
     // 1. Try to load from Cache first
+    // 1. Check cache as a fallback instead of immediate return
     const cached = localStorage.getItem('appData');
     if (cached) {
       try {
-        console.log("Loading from cache...");
         this.data = JSON.parse(cached);
-        // We return existing data to let app render immediately.
-        // But we MUST check for updates in background.
-        this.fetchAndCache(); // Fire and forget (or handle via customized event if needed)
-        return this.data; 
       } catch (e) {
         console.error("Cache parse error", e);
         localStorage.removeItem('appData');
