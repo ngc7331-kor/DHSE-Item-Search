@@ -183,12 +183,23 @@
         display: block;
       }
 
+      #results {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      @media (min-width: 768px) {
+        #results {
+          grid-template-columns: 1fr 1fr; /* 2열 배치 */
+        }
+      }
+
       .result-card {
         background: var(--card);
         border-radius: 12px;
         display: flex;
         overflow: hidden;
-        margin-bottom: 12px;
         border: 1px solid var(--border);
         box-shadow: 0 2px 4px var(--shadow);
         cursor: pointer;
