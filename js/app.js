@@ -88,6 +88,15 @@ function customSort(a, b) {
   return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true });
 }
 
+// 배열을 무작위로 섞는 함수 추가
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 window.onload = () => { 
   try {
     preload(); setupDropdowns();
@@ -126,7 +135,8 @@ async function preload() {
       });
     });
   
-    fullData = cleanData; // Use cleanData for consistency
+    // 데이터를 무작위로 섞어서 fullData에 할당
+    fullData = shuffleArray(cleanData); 
     isInitialLoad = false;
     renderUI(); 
   } catch (e) {
@@ -229,10 +239,13 @@ function performSearch() {
   
   const data = db.searchData(c, a, i);
   
-  fullData = data.map(d => ({
+  const formattedData = data.map(d => ({
       ...d,
       종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력'
   }));
+  
+  // 검색 결과도 무작위로 섞기
+  fullData = shuffleArray(formattedData);
   renderUI();
 }
 
