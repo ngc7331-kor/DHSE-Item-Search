@@ -64,6 +64,15 @@
       .header h3 {
         margin: 0;
         font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .logo-icon {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
       }
 
       .admin-btn {
@@ -342,8 +351,14 @@
         animation: floatUp 0.3s ease-out;
       }
       @keyframes floatUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .detail-content {
@@ -376,7 +391,7 @@
         justify-content: center;
         z-index: 10;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         backdrop-filter: blur(4px);
       }
       .detail-close-btn:hover {
@@ -406,7 +421,7 @@
         width: 100%;
         height: 300px;
         background: #f3f4f6; /* 밝은 회색 */
-        background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iI2QxZDVEQiI+PGc+PHBhdGggZD0iTTIwIDQwQTIwIDIwIDAgMSAxIDIwIDBhMjAgMjAgMCAwIDEgMCA0MHptMC0zNmMxLjk1NiAwIDMuNzkxLjM0IDUuNDU1Ljk2NmwtLjQzIDEuOTU0QTE0LjAxIDE0LjAxIDAgMCAwIDIwIDZDMTIuMjY4IDYgNiAxMi4yNjggNiAyMHMyLjM0IDcuNzM3IDYuMTcyIDEwLjUzM2wuNTEtMS45MzVBMTQuMDEgMTQuMDEgMCAwIDAgMjAgMzRjNy43MzIgMCAxNC02LjI2OCAxNC0xNFMzMi4yNjggOCAyNCA4em0wIDMyYy02LjM1MSAwLTExLjc4Ni0zLjQ0OS0xNC42ODgtOC42MzhsMi4wNy0uODMyQTExLjk5IDExLjk5IDAgMCAwIDIwIDM2YzYuNjI3IDAgMTItNS4zNzMgMTItMTJzLTUuMzczLTEyLTEyLTEyYy0zLjcwNiAwLTcuMDUgMS42OTktOS4zMDYgNC4zODJsLTEuNjEzLTEuMTk2QTEzLjk3NSAxMy45NzUgMCAwIDEgMjAgNHMxNiA3LjE2MyAxNiAxNmMwIDguODM3LTcuMTYzIDE2LTE2IDE2eiIvPjwvZz48L3N2Zz4='); /* 은은한 패턴 */
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iI2QxZDVEQiI+PGc+PHBhdGggZD0iTTIwIDQwQTIwIDIwIDAgMSAxIDIwIDBhMjAgMjAgMCAwIDEgMCA0MHptMC0zNmMxLjk1NiAwIDMuNzkxLjM0IDUuNDU1Ljk2NmwtLjQzIDEuOTU0QTE0LjAxIDE0LjAxIDAgMCAwIDIwIDZDMTIuMjY4IDYgNiAxMi4yNjggNiAyMHMyLjM0IDcuNzM3IDYuMTcyIDEwLjUzM2wuNTEtMS45MzVBMTQuMDEgMTQuMDEgMCAwIDAgMjAgMzRjNy43MzIgMCAxNC02LjI2OCAxNC0xNFMzMi4yNjggOCAyNCA4em0wIDMyYy02LjM1MSAwLTExLjc4Ni0zLjQ0OS0xNC42ODgtOC42MzhsMi4wNy0uODMyQTExLjk5IDExLjk5IDAgMCAwIDIwIDM2YzYuNjI3IDAgMTItNS4zNzMgMTItMTJzLTUuMzczLTEyLTEyLTEyYy0zLjcwNiAwLTcuMDUgMS42OTktOS4zMDYgNC4zODJsLTEuNjEzLTEuMTk2QTEzLjk3NSAxMy45NzUgMCAwIDEgMjAgNHMxNiA3LjE2MyAxNiAxNmMwIDguODM3LTcuMTYzIDE2LTE2IDE2eiIvPjwvZz48L3N2Zz4="); /* 은은한 패턴 */
         background-repeat: no-repeat;
         background-position: center;
         background-size: 60px;
@@ -450,13 +465,13 @@
         display: flex;
         align-items: center;
         padding: 12px 0;
-        border-bottom: 1px solid rgba(0,0,0,0.05); /* 아주 연한 선 */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* 아주 연한 선 */
         font-size: 15px;
       }
       .detail-row:last-child {
         border-bottom: none;
       }
-      
+
       .detail-label {
         width: 70px;
         color: var(--text-sub);
@@ -476,14 +491,50 @@
   </head>
   <body>
     <!-- 로딩 오버레이 추가 -->
-    <div id="loadingOverlay" style="position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-      <div style="border:4px solid rgba(0,0,0,0.1); width:40px; height:40px; border-radius:50%; border-left-color:var(--primary); animation:spin 1s linear infinite; margin-bottom:15px;"></div>
-      <div style="font-weight:bold; color:var(--text);">최신 데이터를 불러오는 중입니다...</div>
-      <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+    <div
+      id="loadingOverlay"
+      style="
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          border: 4px solid rgba(0, 0, 0, 0.1);
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border-left-color: var(--primary);
+          animation: spin 1s linear infinite;
+          margin-bottom: 15px;
+        "
+      ></div>
+      <div style="font-weight: bold; color: var(--text)">
+        최신 데이터를 불러오는 중입니다...
+      </div>
+      <style>
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      </style>
     </div>
     <div class="container">
       <div class="header">
-        <h3>🎓 동해특수교육지원센터 물품검색</h3>
+        <h3>
+          <img src="icon-v9-512.png" class="logo-icon" alt="로고" />
+          동해특수교육지원센터 물품검색
+        </h3>
         <button class="admin-btn" onclick="toggleAdmin()">👤</button>
       </div>
 
@@ -578,32 +629,32 @@
       <div class="detail-wrapper">
         <button class="detail-close-btn" onclick="closeDetailModal()">×</button>
         <div class="detail-content">
-            <div class="detail-img-area">
+          <div class="detail-img-area">
             <img id="dt_img" src="" alt="물품 사진" />
-            </div>
-            <div class="detail-info-area">
+          </div>
+          <div class="detail-info-area">
             <div class="detail-title" id="dt_name"></div>
             <div class="detail-row">
-                <span class="detail-label">종목</span
-                ><span class="detail-val" id="dt_cat"></span>
+              <span class="detail-label">종목</span
+              ><span class="detail-val" id="dt_cat"></span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">영역</span
-                ><span class="detail-val" id="dt_area"></span>
+              <span class="detail-label">영역</span
+              ><span class="detail-val" id="dt_area"></span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">순번</span
-                ><span class="detail-val" id="dt_num"></span>
+              <span class="detail-label">순번</span
+              ><span class="detail-val" id="dt_num"></span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">위치</span
-                ><span class="detail-val" id="dt_loc"></span>
+              <span class="detail-label">위치</span
+              ><span class="detail-val" id="dt_loc"></span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">수량</span
-                ><span class="detail-val" id="dt_qty"></span>
+              <span class="detail-label">수량</span
+              ><span class="detail-val" id="dt_qty"></span>
             </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>
