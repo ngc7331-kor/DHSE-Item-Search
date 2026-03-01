@@ -8,88 +8,24 @@
     <meta name="theme-color" content="#6366f1" />
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --bg: #ffffff;
-        --card: #f2f2f2;
-        --primary: #4f46e5;
-        --text: #0f172a;
-        --text-sub: #64748b;
-        --border: #e2e8f0;
-        --input-bg: #ffffff;
-        --input-border: #e2e8f0;
-        --highlight: #dc2626;
-        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #111827;
-          --card: #1f2937;
-          --primary: #818cf8;
-          --text: #f9fafb;
-          --text-sub: #9ca3af;
-          --border: #374151;
-          --input-bg: #111827;
-          --input-border: #374151;
-          --highlight: #fb7185;
-          --shadow: rgba(0, 0, 0, 0.5);
-        }
-      }
+      :root { --bg: #ffffff; --card: #f2f2f2; --primary: #4f46e5; --text: #0f172a; --text-sub: #64748b; --border: #e2e8f0; --input-bg: #ffffff; --input-border: #e2e8f0; --highlight: #dc2626; --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+      @media (prefers-color-scheme: dark) { :root { --bg: #111827; --card: #1f2937; --primary: #818cf8; --text: #f9fafb; --text-sub: #9ca3af; --border: #374151; --input-bg: #111827; --input-border: #374151; --highlight: #fb7185; --shadow: rgba(0, 0, 0, 0.5); } }
       html { background-color: var(--bg); height: 100%; margin: 0; }
-      body {
-        font-family: "Pretendard", sans-serif;
-        background-color: var(--bg);
-        color: var(--text);
-        padding: 15px;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
+      body { font-family: "Pretendard", sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
       .container { flex: 1; }
-      .header {
-        background: var(--card);
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        margin-bottom: 15px;
-        position: relative;
-        border: 1px solid var(--border);
-        box-shadow: 0 2px 4px var(--shadow);
-      }
-      .header h3 {
-        margin: 0;
-        font-family: 'Gowun Batang', serif;
-        font-size: 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        font-weight: 700;
-        color: var(--text);
-      }
+      .header { background: var(--card); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; position: relative; border: 1px solid var(--border); box-shadow: 0 2px 4px var(--shadow); }
+      .header h3 { margin: 0; font-family: 'Gowun Batang', serif; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; color: var(--text); }
       .logo-icon { width: 32px; height: 32px; object-fit: contain; }
-      .admin-btn {
-        position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-        background: var(--card); border: 1px solid var(--border); color: var(--text);
-        width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-      }
+      .admin-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: var(--card); border: 1px solid var(--border); color: var(--text); width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
       .admin-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-      .search-section {
-        background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px;
-        border: 1px solid var(--border); box-shadow: 0 2px 4px var(--shadow);
-      }
+      .search-section { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 2px 4px var(--shadow); }
       .search-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
       .form-group { position: relative; }
       .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 4px; font-weight: 600; }
       input { width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 6px; color: var(--text); box-sizing: border-box; }
       input:focus { outline: 2px solid var(--primary); border-color: transparent; }
       input[readonly] { cursor: pointer; background-color: var(--bg); opacity: 0.9; }
-      .dropdown-list {
-        position: absolute; top: 100%; left: 0; right: 0; background: var(--card);
-        border: 1px solid var(--border); border-radius: 6px; z-index: 1000; display: none;
-        box-shadow: 0 4px 10px var(--shadow);
-      }
+      .dropdown-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 6px; z-index: 1000; display: none; box-shadow: 0 4px 10px var(--shadow); }
       .dropdown-list.show { display: block; }
       #itemL { max-height: 407px; overflow-y: auto; }
       .dropdown-item { padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
@@ -100,22 +36,12 @@
       #results { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 15px; }
       @media (max-width: 480px) { #results { grid-template-columns: 1fr; } }
       @media (min-width: 768px) { #results { grid-template-columns: 1fr 1fr; } }
-      .result-card {
-        background: var(--card); border-radius: 12px; display: flex; overflow: hidden;
-        border: 1px solid var(--border); box-shadow: var(--shadow);
-        transition: transform 0.2s, box-shadow 0.2s; height: 120px; cursor: pointer;
-      }
+      .result-card { background: var(--card); border-radius: 12px; display: flex; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s; height: 120px; cursor: pointer; }
       .result-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
       .img-box { width: 200px; background: #f1f5f9; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
       .img-box img { width: 100%; height: 100%; object-fit: cover; }
-      .info-box {
-        flex: 1; padding: 12px 15px; display: grid; grid-template-rows: 1fr auto; align-items: center;
-      }
-      .info-box h3 {
-        margin: 0; font-size: 16px; color: var(--primary); font-weight: 700;
-        line-height: 1.2; font-family: 'Gowun Batang', serif;
-        display: flex; align-items: center; height: 100%;
-      }
+      .info-box { flex: 1; padding: 12px 15px; display: grid; grid-template-rows: 1fr auto; align-items: center; }
+      .info-box h3 { margin: 0; font-size: 16px; color: var(--primary); font-weight: 700; line-height: 1.2; font-family: 'Gowun Batang', serif; display: flex; align-items: center; height: 100%; }
       .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 15px; margin-top: 2px; }
       .info-row { font-size: 13px; line-height: 1.4; display: flex; align-items: center; gap: 8px; padding: 4px 0; }
       .info-row b { font-size: 11px; color: var(--text-sub); font-weight: 500; min-width: 42px; }
@@ -139,7 +65,7 @@
       .detail-close-btn { position: absolute; top: -50px; right: 0; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); color: #333; border: none; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); backdrop-filter: blur(4px); }
       .detail-close-btn:hover { transform: scale(1.1) rotate(90deg); background: #fff; color: var(--primary); }
       @media (min-width: 650px) { .detail-content { flex-direction: row; } .detail-img-area { width: 55%; height: auto; min-height: 400px; } .detail-info-area { width: 45%; padding: 40px 30px; overflow-y: auto; } }
-      .detail-img-area { width: 100%; height: 300px; background: #f3f4f6; background-image: url("data:image/svg+xml;base64,..."); background-repeat: no-repeat; background-position: center; background-size: 60px; display: flex; align-items: center; justify-content: center; position: relative; }
+      .detail-img-area { width: 100%; height: 300px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; position: relative; }
       .detail-img-area img { width: 100%; height: 100%; object-fit: contain; z-index: 2; transition: opacity 0.3s; }
       .detail-info-area { padding: 25px; display: flex; flex-direction: column; justify-content: center; background: var(--card); }
       .detail-title { font-size: 1.6rem; color: var(--text); margin: 0 0 25px 0; font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; border-bottom: 2px solid var(--primary); padding-bottom: 15px; display: inline-block; }
@@ -195,94 +121,43 @@
         </div>
       </div>
     </div>
-    <div class="modal" id="modal">
-      <div class="modal-content">
-        <h3 id="mTitle">항목 추가</h3>
-        <div class="form-group"><label>종목</label><input type="text" id="m_cat" autocomplete="off" /><div class="dropdown-list" id="mCatL"></div></div>
-        <div class="form-group" style="margin-top: 10px"><label>영역</label><input type="text" id="m_area" autocomplete="off" /><div class="dropdown-list" id="mAreaL"></div></div>
-        <div class="form-group" style="margin-top: 10px"><label>순번</label><input type="text" id="m_num" readonly style="background: rgba(0, 0, 0, 0.1)" /></div>
-        <div class="form-group" style="margin-top: 10px"><label>품명</label><input type="text" id="m_item" /></div>
-        <div class="form-group" style="margin-top: 10px"><label>수량</label><input type="text" id="m_qty" /></div>
-        <div class="form-group" style="margin-top: 10px"><label>위치</label><input type="text" id="m_loc" /></div>
-        <input type="file" id="f_input" hidden onchange="previewImg(event)" />
-        <button onclick="document.getElementById('f_input').click()" style="width: 100%; padding: 10px; margin: 10px 0; background: #f59e0b; border: none; border-radius: 6px; color: #fff; cursor: pointer;">📷 사진 선택</button>
-        <img id="m_prev" style="width: 100%; display: none; border-radius: 6px; margin-bottom: 10px;" />
-        <div style="display: flex; gap: 10px">
-          <button onclick="saveData()" style="flex: 1; padding: 10px; background: var(--primary); border: none; color: #fff; border-radius: 6px; font-weight: bold;">저장</button>
-          <button onclick="closeModal()" style="flex: 1; background: #444; border: none; color: #fff; border-radius: 6px;">취소</button>
-        </div>
-      </div>
-    </div>
     <script>
       const API_URL = 'https://script.google.com/macros/s/AKfycbxxSnINrMCjHbQNhndAn6nxbcVVljtszQeymF4yHwK3SmoAORTP5_pN0NooCrZDX8efGg/exec';
       class DataManager {
         constructor() { this.data = []; }
         async loadData() {
           const cached = localStorage.getItem('appData');
-          if (cached) { try { this.data = JSON.parse(cached); } catch (e) { localStorage.removeItem('appData'); } }
+          if (cached) { try { const p = JSON.parse(cached); if(Array.isArray(p)) this.data = p; } catch (e) { localStorage.removeItem('appData'); } }
           return await this.fetchAndCache();
         }
         async fetchAndCache() {
           try {
             const response = await fetch(API_URL);
             const result = await response.json();
-            if (result.success) {
-              const newDataStr = JSON.stringify(result.data);
-              const oldDataStr = localStorage.getItem('appData');
-              if (newDataStr !== oldDataStr) { this.data = result.data; localStorage.setItem('appData', newDataStr); window.dispatchEvent(new CustomEvent('data-updated')); }
+            if (result.success && Array.isArray(result.data)) {
+              this.data = result.data; localStorage.setItem('appData', JSON.stringify(this.data));
+              window.dispatchEvent(new CustomEvent('data-updated'));
               return this.data;
             } else { throw new Error(result.message || '데이터 로드 실패'); }
-          } catch (e) { if (this.data.length === 0) alert("오류: " + e.message); return this.data; }
+          } catch (e) { return this.data || []; }
         }
         getAllData() { return this.data; }
         searchData(c, a, i) {
+          if(!Array.isArray(this.data)) return [];
           return this.data.filter(d => {
-            const matchCat = (c === '전체' || !c) ? true : (c === '미입력' ? d.종목 === '' : d.종목 === c);
-            const matchArea = (a === '전체' || !a) ? true : (a === '미입력' ? d.영역 === '' : d.영역 === a);
+            const matchCat = (c === '전체' || !c) ? true : (c === '미입력' ? (!d.종목 || d.종목 === '') : d.종목 === c);
+            const matchArea = (a === '전체' || !a) ? true : (a === '미입력' ? (!d.영역 || d.영역 === '') : d.영역 === a);
             const dataItemName = (d.품명 || '').trim() === '' ? '미입력' : d.품명;
-            const matchItem = (i === '전체' || !i) ? true : dataItemName.includes(i);
+            const matchItem = (i === '전체' || !i) ? true : isMatch(dataItemName, i);
             return matchCat && matchArea && matchItem;
           });
         }
-        getNextNumber(category) {
-          const prefix = category.substring(0, 2);
-          const filtered = this.data.filter(d => (d.순번 || '').startsWith(prefix));
-          if (filtered.length === 0) return prefix + "-001";
-          const numbers = filtered.map(d => { const parts = d.순번.split('-'); return parts.length > 1 ? parseInt(parts[1], 10) : 0; });
-          const nextNum = (Math.max(...numbers) + 1).toString().padStart(3, '0');
-          return prefix + "-" + nextNum;
-        }
-        async addData(obj) {
-          try {
-            const payload = { action: 'add', item: { 종목: obj.종목 === '미입력' ? '' : obj.종목, 영역: obj.영역 === '미입력' ? '' : obj.영역, 순번: obj.순번 || '', 품명: obj.품명 === '미입력' ? '' : obj.품명, 수량: obj.수량 || '', 위치: obj.위치 || '', 사진: obj.사진 || '' } };
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            this.data.push(payload.item); return { success: true, message: '저장 요청 완료' };
-          } catch (e) { return { success: false, message: e.message }; }
-        }
-        async updateData(old, n) {
-          try {
-            const payload = { action: 'update', oldItem: old, item: { 종목: n.종목 === '미입력' ? '' : n.종목, 영역: n.영역 === '미입력' ? '' : n.영역, 순번: n.순번, 품명: n.품명 === '미입력' ? '' : n.품명, 수량: n.수량, 위치: n.위치, 사진: n.사진 || '' } };
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const idx = this.data.findIndex(d => d.순번 === old.순번 && d.종목 === old.종목);
-            if (idx !== -1) { this.data[idx] = payload.item; }
-            return { success: true, message: '수정 요청 완료' };
-          } catch (e) { return { success: false, message: e.message }; }
-        }
-        async deleteData(obj) {
-          try {
-            const payload = { action: 'delete', item: obj };
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const idx = this.data.findIndex(d => d.순번 === obj.순번 && d.종목 === obj.종목);
-            if (idx !== -1) this.data.splice(idx, 1);
-            return { success: true, message: '삭제 요청 완료' };
-          } catch (e) { return { success: false, message: e.message }; }
-        }
       }
       const db = new DataManager();
-      let isAdmin = false; 
-      let cache = { cats: [], areas: {}, items: {}, allAreas: [], allItems: [] };
-      let fullData = []; let currentRenderedData = []; let currentPage = 1; let currentMode = 'add'; let editD = null; let isInitialLoad = true;
+      let isAdmin = false; let cache = { cats: [], areas: {}, items: {}, allAreas: [], allItems: [] };
+      let fullData = []; let currentRenderedData = []; let currentPage = 1; let isInitialLoad = true;
       function getJamos(str) {
+        if(!str) return "";
         const cho = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
         const jung = ["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
         const jong = ["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
@@ -296,23 +171,18 @@
       }
       function isMatch(text, query) {
         if (!query) return true; if (!text) return false;
-        const t = text.toString(); const q = query.toString();
+        const t = text.toString().toLowerCase(); const q = query.toString().toLowerCase();
         return t.includes(q) || getJamos(t).includes(getJamos(q));
       }
-      function customSort(a, b) {
-        if (a === '미입력') return 1; if (b === '미입력') return -1;
-        if (a === '전체') return -1; if (b === '전체') return 1;
-        return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true });
-      }
-      function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
-        return array;
-      }
+      function customSort(a, b) { if (a === '미입력') return 1; if (b === '미입력') return -1; if (a === '전체') return -1; if (b === '전체') return 1; return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true }); }
+      function shuffleArray(array) { if(!Array.isArray(array)) return []; let newArr = [...array]; for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; } return newArr; }
       window.onload = () => { preload(); setupDropdowns(); window.addEventListener('data-updated', () => { preload(); }); };
       async function preload() {
+        console.log("Preload Start");
+        const loader = document.getElementById('loadingOverlay');
         try {
           const data = await db.loadData();
-          const cleanData = data.map(d => ({ ...d, 종목: (d.종목 && d.종목.toString().trim()) || '미입력', 영역: (d.영역 && d.영역.toString().trim()) || '미입력', 품명: (d.품명 && d.품명.toString().trim()) || '미입력' }));
+          const cleanData = (data || []).map(d => ({ ...d, 종목: (d.종목 && d.종목.toString().trim()) || '미입력', 영역: (d.영역 && d.영역.toString().trim()) || '미입력', 품명: (d.품명 && d.품명.toString().trim()) || '미입력' }));
           cache.cats = ['전체', ...new Set(cleanData.map(d => d.종목))].sort(customSort);
           cache.allAreas = ['전체', ...new Set(cleanData.map(d => d.영역))].sort(customSort);
           cache.allItems = ['전체', ...new Set(cleanData.map(d => d.품명))].sort(customSort);
@@ -322,28 +192,21 @@
             cache.areas[c] = ['전체', ...new Set(cD.map(d => d.영역))].sort(customSort);
             cache.areas[c].forEach(a => { cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort); });
           });
-          // v9: 초기 진입 시 랜덤 배치
-          fullData = shuffleArray(cleanData); 
-          isInitialLoad = false; renderUI(); 
-        } catch (e) { console.error("Preload Failed:", e); }
-        finally { const loader = document.getElementById('loadingOverlay'); if(loader) loader.style.display = 'none'; }
+          fullData = shuffleArray(cleanData); isInitialLoad = false; renderUI();
+          console.log("Preload Success");
+        } catch (e) { console.error("Preload Error", e); }
+        finally { if(loader) loader.style.display = 'none'; }
       }
       function setupDropdowns() {
         const bind = (id, lid, dataFn) => {
-          const el = document.getElementById(id); const listEl = document.getElementById(lid); const isStrict = el.hasAttribute('readonly');
+          const el = document.getElementById(id); const listEl = document.getElementById(lid); if(!el || !listEl) return;
+          const isStrict = el.hasAttribute('readonly');
           const showFilteredList = () => {
             const val = el.value.trim(); let items = dataFn();
             if (!isStrict && val) { items = items.filter(i => isMatch(i, val) && i !== '전체'); if (items.length === 0) items = ['검색 결과 없음']; }
             listEl.innerHTML = items.map(i => `<div class="dropdown-item">${i}</div>`).join('');
             document.querySelectorAll('.dropdown-list').forEach(x => x.classList.remove('show')); listEl.classList.add('show');
-            Array.from(listEl.children).forEach(child => {
-              child.onclick = (e) => {
-                e.stopPropagation(); if (child.textContent === '검색 결과 없음') return;
-                el.value = child.textContent; listEl.classList.remove('show');
-                if (id === 'cat') { document.getElementById('area').value = ''; document.getElementById('item').value = ''; }
-                if (id === 'm_cat') { document.getElementById('m_num').value = db.getNextNumber(el.value); }
-              };
-            });
+            Array.from(listEl.children).forEach(child => { child.onclick = (e) => { e.stopPropagation(); if (child.textContent === '검색 결과 없음') return; el.value = child.textContent; listEl.classList.remove('show'); if (id === 'cat') { document.getElementById('area').value = ''; document.getElementById('item').value = ''; } }; });
           };
           el.onclick = (e) => { e.stopPropagation(); if (!isStrict && el.value) el.value = ''; showFilteredList(); };
           if (!isStrict) el.oninput = () => showFilteredList();
@@ -353,20 +216,16 @@
         bind('item', 'itemL', () => {
           const c = document.getElementById('cat').value || '전체'; const a = document.getElementById('area').value || '전체';
           if (c === '전체' && a === '전체') return cache.allItems;
-          if (c !== '전체' && cache.items[c+'_'+a]) return cache.items[c+'_'+a];
           const filtered = db.getAllData().filter(d => (c==='전체'||d.종목===c) && (a==='전체'||d.영역===a)).map(d=>d.품명);
           return ['전체', ...new Set(filtered)].sort(customSort);
         });
-        bind('m_cat', 'mCatL', () => cache.cats.filter(c => c !== '전체'));
-        bind('m_area', 'mAreaL', () => cache.allAreas.filter(a => a !== '전체'));
         document.addEventListener('click', (e) => { if (!e.target.closest('.form-group')) document.querySelectorAll('.dropdown-list').forEach(x => x.classList.remove('show')); });
       }
       function getInstantImgUrl(url) {
-        if (!url) return '';
+        if (!url || typeof url !== 'string') return '';
         try {
-          let id = '';
-          if (url.includes('id=')) { const match = url.match(/id=([^&]+)/); if (match) id = match[1]; } 
-          else if (url.includes('/file/d/')) { const match = url.match(/\/file\/d\/([^\/]+)/); if (match) id = match[1]; }
+          let id = ''; if (url.includes('id=')) { const m = url.match(/id=([^&]+)/); if (m) id = m[1]; } 
+          else if (url.includes('/file/d/')) { const m = url.match(/\/file\/d\/([^\/]+)/); if (m) id = m[1]; }
           if (id) return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w800';
         } catch(e) {}
         return url;
@@ -375,91 +234,42 @@
         isInitialLoad = false;
         const c = document.getElementById('cat').value || '전체'; const a = document.getElementById('area').value || '전체'; const i = document.getElementById('item').value || '전체';
         const data = db.searchData(c, a, i);
-        
-        const categoryOrder = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
-        const isFilterActive = (c && c !== '전체') || (a && a !== '전체') || (i && i !== '전체');
-
-        if (isFilterActive) {
-          // v9: 필터 검색 시 종목별/순번순 정렬
-          fullData = data.map(d => ({ 
-            ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' 
-          })).sort((a, b) => {
-            const orderA = categoryOrder[a.종목] || 99;
-            const orderB = categoryOrder[b.종목] || 99;
-            if (orderA !== orderB) return orderA - orderB;
-            return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
-          });
+        const order = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
+        const active = (c && c !== '전체') || (a && a !== '전체') || (i && i !== '전체');
+        if (active) {
+          fullData = data.map(d => ({ ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' })).sort((a, b) => { const oa = order[a.종목] || 99; const ob = order[b.종목] || 99; if (oa !== ob) return oa - ob; return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' }); });
         } else {
-          // v9: 전체 검색 시 랜덤 배치
-          fullData = shuffleArray(data.map(d => ({ 
-            ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' 
-          })));
+          fullData = shuffleArray(data.map(d => ({ ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' })));
         }
-        renderUI();
-        alert("검색이 완료되었습니다. (검색 결과: " + fullData.length + "건)");
+        currentPage = 1; renderUI(); alert("검색이 완료되었습니다. (검색 결과: " + fullData.length + "건)");
       }
       function renderUI() {
-        const res = document.getElementById('results'); const bar = document.getElementById('pagiBar');
+        const res = document.getElementById('results'); const bar = document.getElementById('pagiBar'); if(!res || !bar) return;
         if (isInitialLoad) { res.innerHTML = ''; bar.style.display = 'none'; return; }
-        const size = parseInt(document.getElementById('pageSize').value);
+        const size = parseInt(document.getElementById('pageSize').value) || 10;
         const startIdx = (currentPage - 1) * size;
         currentRenderedData = fullData.slice(startIdx, startIdx + size);
         if (currentRenderedData.length === 0) { res.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-sub);">검색 결과가 없습니다.</p>'; bar.style.display = 'none'; return; }
         res.innerHTML = '';
         currentRenderedData.forEach((d, idx) => {
           const card = document.createElement('div'); card.className = 'result-card'; card.onclick = () => showDetailModal(idx);
-          const adminHtml = isAdmin ? `<div style="margin-top:8px"><button onclick="event.stopPropagation(); editItem(${idx})" style="font-size:11px; padding:3px 7px;">수정</button><button onclick="event.stopPropagation(); deleteItem(${idx})" style="font-size:11px; padding:3px 7px; color:red">삭제</button></div>` : '';
-          card.innerHTML = `<div class="img-box"><img src="${getInstantImgUrl(d.사진)}" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/ngc7331-kor/DHSE-Item-Search/main/icon-v9-512.png'"></div><div class="info-box"><h3>${d.품명}</h3><div class="info-grid"><div class="info-row"><b>종목</b><span class="val">${d.종목}</span></div><div class="info-row"><b>영역</b><span class="val">${d.영역}</span></div><div class="info-row"><b>순번</b><span class="val">${d.순번}</span></div><div class="info-row"><b>수량</b><span class="val">${d.수량}</span></div><div class="info-row full"><b>위치</b><span class="val">${d.위치}</span></div></div>${adminHtml}</div>`;
+          card.innerHTML = `<div class="img-box"><img src="${getInstantImgUrl(d.사진)}" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/ngc7331-kor/DHSE-Item-Search/main/icon-v9-512.png'"></div><div class="info-box"><h3>${d.품명}</h3><div class="info-grid"><div class="info-row"><b>종목</b><span class="val">${d.종목}</span></div><div class="info-row"><b>영역</b><span class="val">${d.영역}</span></div><div class="info-row"><b>순번</b><span class="val">${d.순번}</span></div><div class="info-row"><b>수량</b><span class="val">${d.수량}</span></div><div class="info-row full"><b>위치</b><span class="val">${d.위치}</span></div></div></div>`;
           res.appendChild(card);
         });
         bar.style.display = 'flex'; const nums = document.getElementById('pagiNums'); nums.innerHTML = '';
         const totalPages = Math.ceil(fullData.length / size); const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1; const endPage = Math.min(startPage + 9, totalPages);
-        if (startPage > 1) nums.innerHTML += `<button class="pagi-btn" onclick="changeP(${startPage-1})">이전</button>`;
-        for (let p = startPage; p <= endPage; p++) { nums.innerHTML += `<button class="pagi-btn ${p===currentPage?'active':''}" onclick="changeP(${p})">${p}</button>`; }
-        if (endPage < totalPages) nums.innerHTML += `<button class="pagi-btn" onclick="changeP(${endPage+1})">다음</button>`;
+        if (startPage > 1) { const b = document.createElement('button'); b.className='pagi-btn'; b.textContent='이전'; b.onclick=()=>changeP(startPage-1); nums.appendChild(b); }
+        for (let p = startPage; p <= endPage; p++) { const b = document.createElement('button'); b.className=`pagi-btn ${p===currentPage?'active':''}`; b.textContent=p; b.onclick=()=>changeP(p); nums.appendChild(b); }
+        if (endPage < totalPages) { const b = document.createElement('button'); b.className='pagi-btn'; b.textContent='다음'; b.onclick=()=>changeP(endPage+1); nums.appendChild(b); }
       }
       function showDetailModal(idx) {
         const d = currentRenderedData[idx]; if (!d) return;
-        document.getElementById('dt_img').src = getInstantImgUrl(d.사진);
-        document.getElementById('dt_name').textContent = d.품명;
-        document.getElementById('dt_cat').textContent = d.종목;
-        document.getElementById('dt_area').textContent = d.영역;
-        document.getElementById('dt_num').textContent = d.순번;
-        document.getElementById('dt_loc').textContent = d.위치;
-        document.getElementById('dt_qty').textContent = d.수량;
+        document.getElementById('dt_img').src = getInstantImgUrl(d.사진); document.getElementById('dt_name').textContent = d.품명; document.getElementById('dt_cat').textContent = d.종목; document.getElementById('dt_area').textContent = d.영역; document.getElementById('dt_num').textContent = d.순번; document.getElementById('dt_loc').textContent = d.위치; document.getElementById('dt_qty').textContent = d.수량;
         document.getElementById('detailModal').classList.add('show');
       }
       function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
       function changeP(p) { currentPage = p; renderUI(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-      function toggleAdmin() { isAdmin = !isAdmin; document.querySelector('.admin-btn').classList.toggle('active'); document.getElementById('addBtn').classList.toggle('show'); renderUI(); }
-      function openModal() { currentMode='add'; document.getElementById('mTitle').textContent = '항목 추가'; ['m_cat','m_area','m_num','m_item','m_qty','m_loc'].forEach(id => document.getElementById(id).value = ''); document.getElementById('m_prev').style.display = 'none'; document.getElementById('modal').classList.add('show'); }
-      function closeModal() { document.getElementById('modal').classList.remove('show'); }
-      function editItem(idx) { 
-        const d = currentRenderedData[idx]; if (!d) return;
-        currentMode = 'edit'; editD = d; document.getElementById('mTitle').textContent = '항목 수정'; document.getElementById('m_cat').value = d.종목; document.getElementById('m_area').value = d.영역; document.getElementById('m_num').value = d.순번; document.getElementById('m_item').value = d.품명; document.getElementById('m_qty').value = d.수량; document.getElementById('m_loc').value = d.위치;
-        const img = getInstantImgUrl(d.사진); if(img) { document.getElementById('m_prev').src = img; document.getElementById('m_prev').style.display = 'block'; } else { document.getElementById('m_prev').style.display = 'none'; }
-        document.getElementById('modal').classList.add('show');
-      }
-      function previewImg(e) { 
-        const file = e.target.files[0], reader = new FileReader();
-        reader.onload = (ev) => { 
-          const img = new Image(); 
-          img.onload = () => { 
-            const cvs = document.createElement('canvas'); const maxDim = 600; const s = Math.min(maxDim/img.width, maxDim/img.height, 1);
-            cvs.width = img.width * s; cvs.height = img.height * s;
-            const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-            const resData = cvs.toDataURL('image/jpeg', 0.8); document.getElementById('m_prev').src = resData; document.getElementById('m_prev').style.display = 'block'; 
-          }; 
-          img.src = ev.target.result; 
-        }; 
-        if(file) reader.readAsDataURL(file);
-      }
-      async function saveData() { 
-        const obj = { 종목: document.getElementById('m_cat').value, 영역: document.getElementById('m_area').value, 순번: document.getElementById('m_num').value, 품명: document.getElementById('m_item').value, 수량: document.getElementById('m_qty').value, 위치: document.getElementById('m_loc').value, 사진: document.getElementById('m_prev').style.display==='block' ? document.getElementById('m_prev').src : '' };
-        let res = currentMode === 'add' ? await db.addData(obj) : await db.updateData(editD, obj);
-        if (res.success) { alert(res.message); closeModal(); preload(); } else { alert(res.message); }
-      }
-      async function deleteItem(idx) { const d = currentRenderedData[idx]; if(confirm('삭제하시겠습니까?')) { const res = await db.deleteData(d); alert(res.message); preload(); } }
+      function toggleAdmin() { isAdmin = !isAdmin; document.querySelector('.admin-btn').classList.toggle('active'); alert("관리자 기능은 구글 앱스 스크립트 도구에서 직접 사용해 주세요."); }
     </script>
   </body>
 </html>
