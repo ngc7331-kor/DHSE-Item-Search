@@ -66,7 +66,18 @@ function isMatch(text, query) {
 function customSort(a, b) { if (a === '미입력') return 1; if (b === '미입력') return -1; if (a === '전체') return -1; if (b === '전체') return 1; return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true }); }
 function shuffleArray(array) { if(!Array.isArray(array)) return []; let newArr = [...array]; for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; } return newArr; }
 
-window.onload = () => { preload(); setupDropdowns(); };
+window.onload = () => {
+  const btn = document.getElementById('searchBtn');
+  if (btn) {
+    btn.addEventListener('click', (e) => {
+      console.log("Search Button Clicked");
+      performSearch();
+    });
+    console.log("Search Button Listener Bound");
+  }
+  preload(); 
+  setupDropdowns();
+};
 
 async function preload() {
   const loader = document.getElementById('loadingOverlay');

@@ -92,7 +92,7 @@
           <div class="form-group"><label>종목</label><input type="text" id="cat" placeholder="선택하세요" autocomplete="off" readonly /><div class="dropdown-list" id="catL"></div></div>
           <div class="form-group"><label>영역</label><input type="text" id="area" placeholder="선택하세요" autocomplete="off" readonly /><div class="dropdown-list" id="areaL"></div></div>
           <div class="form-group"><label>품명</label><input type="text" id="item" placeholder="전체/입력 (자음가능)" autocomplete="off" /><div class="dropdown-list" id="itemL"></div></div>
-          <button type="button" id="searchBtn" onclick="performSearch();" style="background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">🔍 검색</button>
+          <button type="button" id="searchBtn" style="background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">🔍 검색</button>
         </div>
       </div>
       <div id="results"></div>
@@ -183,7 +183,18 @@
       }
       function customSort(a, b) { if (a === '미입력') return 1; if (b === '미입력') return -1; if (a === '전체') return -1; if (b === '전체') return 1; return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true }); }
       function shuffleArray(array) { if(!Array.isArray(array)) return []; let newArr = [...array]; for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; } return newArr; }
-      window.onload = () => { preload(); setupDropdowns(); };
+      window.onload = () => {
+        const btn = document.getElementById('searchBtn');
+        if (btn) {
+          btn.addEventListener('click', (e) => {
+            console.log("Search Button Clicked");
+            performSearch();
+          });
+          console.log("Search Button Listener Bound");
+        }
+        preload(); 
+        setupDropdowns();
+      };
       async function preload() {
         const loader = document.getElementById('loadingOverlay');
         try {
