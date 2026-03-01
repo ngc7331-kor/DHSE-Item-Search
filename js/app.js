@@ -135,8 +135,15 @@ async function preload() {
       });
     });
   
-    // 데이터를 무작위로 섞어서 fullData에 할당
-    fullData = shuffleArray(cleanData); 
+    // v8: 종목별(교재교구-보조기기-진단평가도구) 및 순번순 정렬
+    const categoryOrder = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
+    fullData = cleanData.sort((a, b) => {
+      const orderA = categoryOrder[a.종목] || 99;
+      const orderB = categoryOrder[b.종목] || 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
+    });
+    
     isInitialLoad = false;
     renderUI(); 
   } catch (e) {
@@ -239,13 +246,20 @@ function performSearch() {
   
   const data = db.searchData(c, a, i);
   
-  const formattedData = data.map(d => ({
-      ...d,
-      종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력'
-  }));
+  const categoryOrder = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
+  const sortedData = data.map(d => ({ 
+      ...d, 
+      종목: d.종목 || '미입력', 
+      영역: d.영역 || '미입력', 
+      품명: d.품명 || '미입력' 
+  })).sort((a, b) => {
+    const orderA = categoryOrder[a.종목] || 99;
+    const orderB = categoryOrder[b.종목] || 99;
+    if (orderA !== orderB) return orderA - orderB;
+    return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
+  });
   
-  // 검색 결과도 무작위로 섞기
-  fullData = shuffleArray(formattedData);
+  fullData = sortedData;
   renderUI();
 }
 

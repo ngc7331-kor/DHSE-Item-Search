@@ -15,6 +15,8 @@
         --text: #0f172a;
         --text-sub: #64748b;
         --border: #e2e8f0;
+        --input-bg: #ffffff;
+        --input-border: #e2e8f0;
         --highlight: #dc2626;
         --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
       }
@@ -320,7 +322,14 @@
             cache.areas[c] = ['전체', ...new Set(cD.map(d => d.영역))].sort(customSort);
             cache.areas[c].forEach(a => { cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort); });
           });
-          fullData = shuffleArray(cleanData); isInitialLoad = false; renderUI(); 
+          const categoryOrder = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
+          fullData = cleanData.sort((a, b) => {
+            const orderA = categoryOrder[a.종목] || 99;
+            const orderB = categoryOrder[b.종목] || 99;
+            if (orderA !== orderB) return orderA - orderB;
+            return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
+          });
+          isInitialLoad = false; renderUI(); 
         } catch (e) { console.error("Preload Failed:", e); }
         finally { const loader = document.getElementById('loadingOverlay'); if(loader) loader.style.display = 'none'; }
       }
@@ -371,7 +380,19 @@
         isInitialLoad = false;
         const c = document.getElementById('cat').value || '전체'; const a = document.getElementById('area').value || '전체'; const i = document.getElementById('item').value || '전체';
         const data = db.searchData(c, a, i);
-        fullData = shuffleArray(data.map(d => ({ ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' })));
+        const categoryOrder = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
+        const sortedData = data.map(d => ({ 
+          ...d, 
+          종목: d.종목 || '미입력', 
+          영역: d.영역 || '미입력', 
+          품명: d.품명 || '미입력' 
+        })).sort((a, b) => {
+          const orderA = categoryOrder[a.종목] || 99;
+          const orderB = categoryOrder[b.종목] || 99;
+          if (orderA !== orderB) return orderA - orderB;
+          return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
+        });
+        fullData = sortedData;
         renderUI();
       }
       function renderUI() {
