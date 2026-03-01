@@ -322,13 +322,8 @@
             cache.areas[c] = ['전체', ...new Set(cD.map(d => d.영역))].sort(customSort);
             cache.areas[c].forEach(a => { cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort); });
           });
-          const categoryOrder = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
-          fullData = cleanData.sort((a, b) => {
-            const orderA = categoryOrder[a.종목] || 99;
-            const orderB = categoryOrder[b.종목] || 99;
-            if (orderA !== orderB) return orderA - orderB;
-            return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
-          });
+          // v9: 초기 진입 시 랜덤 배치
+          fullData = shuffleArray(cleanData); 
           isInitialLoad = false; renderUI(); 
         } catch (e) { console.error("Preload Failed:", e); }
         finally { const loader = document.getElementById('loadingOverlay'); if(loader) loader.style.display = 'none'; }
@@ -380,19 +375,26 @@
         isInitialLoad = false;
         const c = document.getElementById('cat').value || '전체'; const a = document.getElementById('area').value || '전체'; const i = document.getElementById('item').value || '전체';
         const data = db.searchData(c, a, i);
+        
         const categoryOrder = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
-        const sortedData = data.map(d => ({ 
-          ...d, 
-          종목: d.종목 || '미입력', 
-          영역: d.영역 || '미입력', 
-          품명: d.품명 || '미입력' 
-        })).sort((a, b) => {
-          const orderA = categoryOrder[a.종목] || 99;
-          const orderB = categoryOrder[b.종목] || 99;
-          if (orderA !== orderB) return orderA - orderB;
-          return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
-        });
-        fullData = sortedData;
+        const isFilterActive = (c && c !== '전체') || (a && a !== '전체') || (i && i !== '전체');
+
+        if (isFilterActive) {
+          // v9: 필터 검색 시 종목별/순번순 정렬
+          fullData = data.map(d => ({ 
+            ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' 
+          })).sort((a, b) => {
+            const orderA = categoryOrder[a.종목] || 99;
+            const orderB = categoryOrder[b.종목] || 99;
+            if (orderA !== orderB) return orderA - orderB;
+            return (a.순번 || '').localeCompare(b.순번 || '', undefined, { numeric: true, sensitivity: 'base' });
+          });
+        } else {
+          // v9: 전체 검색 시 랜덤 배치
+          fullData = shuffleArray(data.map(d => ({ 
+            ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' 
+          })));
+        }
         renderUI();
       }
       function renderUI() {
