@@ -132,6 +132,9 @@ async function preload() {
       cache.areas[c] = ['전체', ...new Set(cD.map(d => d.영역))].sort(customSort);
       cache.areas[c].forEach(a => {
         cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort);
+      });
+    });
+  
     // v9: 초기 진입 시 랜덤 배치
     fullData = shuffleArray(cleanData); 
     isInitialLoad = false;
