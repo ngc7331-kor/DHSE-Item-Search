@@ -147,6 +147,17 @@
       .detail-row:last-child { border-bottom: none; }
       .detail-label { width: 70px; color: var(--text-sub); font-weight: 600; font-size: 0.9em; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
       .detail-val { color: var(--text); font-weight: 500; flex: 1; line-height: 1.5; }
+
+      /* v10.7 UI Restoration */
+      .search-msg-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+      .search-msg-modal.show { display: flex; }
+      .search-msg-content { background: var(--card); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); max-width: 320px; width: 85%; animation: modalZoom 0.2s ease-out; }
+      @keyframes modalZoom { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .search-msg-content h4 { margin: 0 0 15px 0; color: var(--primary); font-family: 'Gowun Batang', serif; font-size: 1.3rem; font-weight: 800; }
+      .search-msg-content p { margin: 0 0 25px 0; font-size: 16px; color: var(--text); line-height: 1.5; font-weight: 500; }
+      .search-msg-content button { background: var(--primary); color: #fff; border: none; padding: 12px 40px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+      .install-btn { position: fixed; bottom: 25px; left: 25px; background: #f59e0b; color: #fff; border: 1px solid #d97706; border-radius: 50px; padding: 12px 24px; font-weight: bold; font-size: 14px; display: none; align-items: center; gap: 10px; cursor: pointer; z-index: 8000; box-shadow: 0 8px 16px rgba(245, 158, 11, 0.5); animation: floatBtn 2s infinite ease-in-out; }
+      @keyframes floatBtn { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
   </head>
   <body>
@@ -179,6 +190,14 @@
       </div>
     </div>
     <div class="footer"><b>© 2025 L.To. ALL RIGHTS RESERVED. POWERED BY L.To</b><br />데이터는 동해특수교육지원센터의 자산 정보를 기반으로 합니다.</div>
+    <button id="installBtn" class="install-btn">📲 앱 설치하기</button>
+    <div class="search-msg-modal" id="searchMsgModal" onclick="if(event.target.id==='searchMsgModal') closeSearchMsg()">
+      <div class="search-msg-content" onclick="event.stopPropagation()">
+        <h4>검색 완료</h4>
+        <p id="searchMsgText"></p>
+        <button onclick="closeSearchMsg()">확인</button>
+      </div>
+    </div>
     <div class="detail-modal" id="detailModal" onclick="if (event.target.id === 'detailModal') closeDetailModal();">
       <div class="detail-wrapper">
         <button class="detail-close-btn" onclick="closeDetailModal()">×</button>
@@ -310,8 +329,14 @@
         for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; }
         return newArr;
       }
-      let isPreloadComplete = false; 
-      window.onload = () => { preload(); setupDropdowns(); };
+      let isPreloadComplete = false; let deferredPrompt;
+      window.onload = () => {
+        const btn = document.getElementById('searchBtn'); if (btn) btn.onclick = performSearch;
+        const installBtn = document.getElementById('installBtn');
+        window.onbeforeinstallprompt = (e) => { e.preventDefault(); deferredPrompt = e; if(installBtn) installBtn.style.display = 'flex'; };
+        if(installBtn) installBtn.onclick = async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { deferredPrompt = null; installBtn.style.display = 'none'; } } };
+        preload(); setupDropdowns();
+      };
       async function preload() {
         if (isPreloadComplete) return; 
         console.log("Preloading data...");
@@ -393,8 +418,10 @@
           fullData = shuffleArray(data.map(d => ({ ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' })));
         }
         currentPage = 1; renderUI();
-        alert("검색이 완료되었습니다. (검색 결과: " + fullData.length + "건)");
+        showSearchMsg("검색이 완료되었습니다.<br><b>(검색 결과: " + fullData.length + "건)</b>");
       }
+      function showSearchMsg(txt) { const m = document.getElementById('searchMsgModal'); const t = document.getElementById('searchMsgText'); if(m && t) { t.innerHTML = txt; m.classList.add('show'); } }
+      function closeSearchMsg() { document.getElementById('searchMsgModal').classList.remove('show'); }
       function renderUI() {
         const res = document.getElementById('results'); const bar = document.getElementById('pagiBar'); if(!res || !bar) return;
         if (isInitialLoad) { res.innerHTML = ''; bar.style.display = 'none'; return; }
