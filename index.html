@@ -310,12 +310,15 @@
         for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; }
         return newArr;
       }
-      window.onload = () => { preload(); setupDropdowns(); window.addEventListener('data-updated', () => { preload(); }); };
+      let isPreloadComplete = false; 
+      window.onload = () => { preload(); setupDropdowns(); };
       async function preload() {
-        console.log("Preload Start");
+        if (isPreloadComplete) return; 
+        console.log("Preloading data...");
         const loader = document.getElementById('loadingOverlay');
         try {
           const data = await db.loadData();
+          isPreloadComplete = true; 
           const cleanData = (data || []).map(d => ({ ...d, 종목: (d.종목 && d.종목.toString().trim()) || '미입력', 영역: (d.영역 && d.영역.toString().trim()) || '미입력', 품명: (d.품명 && d.품명.toString().trim()) || '미입력' }));
           cache.cats = ['전체', ...new Set(cleanData.map(d => d.종목))].sort(customSort);
           cache.allAreas = ['전체', ...new Set(cleanData.map(d => d.영역))].sort(customSort);
@@ -327,7 +330,7 @@
             cache.areas[c].forEach(a => { cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort); });
           });
           fullData = shuffleArray(cleanData); isInitialLoad = false; renderUI();
-          console.log("Preload Success");
+          console.log("Preload success.");
         } catch (e) { console.error("Preload Error", e); }
         finally { if(loader) loader.style.display = 'none'; }
       }
