@@ -278,11 +278,20 @@ function renderUI() {
         <button onclick="event.stopPropagation(); deleteItem(${idx})" style="font-size:11px; padding:3px 7px; color:red">삭제</button>
       </div>` : '';
 
-    card.innerHTML = `<div class="img-box"><img src="${getInstantImgUrl(d.사진)}" loading="lazy" onerror="this.src='https://via.placeholder.com/100?text=No+Image'"></div>
-      <div class="info-box"><h3>${d.품명}</h3>
-      <div class="info-row"><b>종목:</b> ${d.종목} | <b>영역:</b> ${d.영역}</div>
-      <div class="info-row"><b>순번:</b> ${d.순번}</div><div class="info-row"><b>위치:</b> ${d.위치} | <b>수량:</b> ${d.수량}</div>
-      ${adminHtml}</div>`;
+    card.innerHTML = `<div class="img-box">
+        <img src="${getInstantImgUrl(d.사진)}" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/ngc7331-kor/DHSE-Item-Search/main/icon-v9-512.png'">
+      </div>
+      <div class="info-box">
+        <h3>${d.품명}</h3>
+        <div class="info-grid">
+          <div class="info-row"><b>종목</b><span class="val">${d.종목}</span></div>
+          <div class="info-row"><b>영역</b><span class="val">${d.영역}</span></div>
+          <div class="info-row"><b>순번</b><span class="val">${d.순번}</span></div>
+          <div class="info-row"><b>수량</b><span class="val">${d.수량}</span></div>
+          <div class="info-row full"><b>위치</b><span class="val">${d.위치}</span></div>
+        </div>
+        ${adminHtml}
+      </div>`;
     res.appendChild(card);
   });
 

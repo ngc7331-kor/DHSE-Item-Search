@@ -4,40 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>동해특수교육지원센터 물품검색</title>
-    <!-- Apps Script 환경에서는 manifest.json 참조가 불필요하거나 작동하지 않을 수 있음 -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ngc7331-kor/DHSE-Item-Search/main/icon-v9-192.png" />
     <meta name="theme-color" content="#6366f1" />
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-      /* ----------------------------------------------------
-       기존 스타일 유지 + 모달 스타일 추가
-    ---------------------------------------------------- */
       :root {
-        --bg: #fffbf0; /* Creamy White */
+        --bg: #fdfdfd;
         --card: #ffffff;
-        --primary: #a5b4fc; /* Pastel Indigo */
-        --text: #4b5563; /* Soft Gray */
-        --text-sub: #9ca3af;
-        --border: #e5e7eb;
-        --input-bg: #ffffff;
-        --input-border: #d1d5db;
-        --highlight: #fct6c1; /* Pastel Orange/Pink */
-        --shadow: rgba(0, 0, 0, 0.03);
+        --primary: #4f46e5;
+        --text: #0f172a;
+        --text-sub: #64748b;
+        --border: #f1f5f9;
+        --highlight: #dc2626;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
       }
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg: #2d3748; /* Soft Dark Gray */
+          --bg: #2d3748;
           --card: #4a5568;
-          --primary: #c7d2fe; /* Lighter Pastel Indigo */
+          --primary: #c7d2fe;
           --text: #f7fafc;
           --text-sub: #cbd5e0;
           --border: #4a5568;
           --input-bg: #2d3748;
           --input-border: #4a5568;
-          --highlight: #fbd38d; /* Pastel Yellow/Orange */
+          --highlight: #fbd38d;
           --shadow: rgba(0, 0, 0, 0.15);
         }
       }
-
       body {
         font-family: "Pretendard", sans-serif;
         background: var(--bg);
@@ -48,9 +42,7 @@
         flex-direction: column;
         min-height: 100vh;
       }
-      .container {
-        flex: 1;
-      }
+      .container { flex: 1; }
       .header {
         background: var(--card);
         padding: 20px;
@@ -63,428 +55,98 @@
       }
       .header h3 {
         margin: 0;
-        font-size: 1.1rem;
+        font-family: 'Gowun Batang', serif;
+        font-size: 1.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-      }
-      .logo-icon {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
-      }
-
-      .admin-btn {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: var(--card);
-        border: 1px solid var(--border);
-        color: var(--text);
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .admin-btn.active {
-        background: var(--primary);
-        color: #fff;
-        border-color: var(--primary);
-      }
-
-      .search-section {
-        background: var(--card);
-        padding: 15px;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        border: 1px solid var(--border);
-        box-shadow: 0 2px 4px var(--shadow);
-      }
-      .search-form {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 10px;
-      }
-      .form-group {
-        position: relative;
-      }
-      .form-group label {
-        display: block;
-        font-size: 11px;
-        color: var(--text-sub);
-        margin-bottom: 4px;
-        font-weight: 600;
-      }
-
-      input {
-        width: 100%;
-        padding: 10px;
-        background: var(--input-bg);
-        border: 1px solid var(--input-border);
-        border-radius: 6px;
-        color: var(--text);
-        box-sizing: border-box;
-      }
-      input:focus {
-        outline: 2px solid var(--primary);
-        border-color: transparent;
-      }
-      input[readonly] {
-        cursor: pointer;
-        background-color: var(--bg);
-        opacity: 0.9;
-      }
-
-      .dropdown-list {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        z-index: 1000;
-        display: none;
-        box-shadow: 0 4px 10px var(--shadow);
-      }
-      .dropdown-list.show {
-        display: block;
-      }
-      #itemL {
-        max-height: 407px;
-        overflow-y: auto;
-      }
-
-      .dropdown-item {
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid var(--border);
-        font-size: 13px;
-        color: var(--text);
-      }
-      .dropdown-item:hover {
-        background: var(--bg);
-        color: var(--primary);
-        font-weight: bold;
-      }
-      .dropdown-item:last-child {
-        border-bottom: none;
-      }
-
-      .add-btn {
-        background: #10b981;
-        color: #fff;
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: none;
-        margin-bottom: 15px;
-        display: none;
-        cursor: pointer;
-        font-weight: bold;
-      }
-      .add-btn.show {
-        display: block;
-      }
-
-      #results {
-        display: grid;
-        grid-template-columns: 1fr;
         gap: 12px;
-      }
-
-      @media (min-width: 768px) {
-        #results {
-          grid-template-columns: 1fr 1fr; /* 2열 배치 */
-        }
-      }
-
-      .result-card {
-        background: var(--card);
-        border-radius: 12px;
-        display: flex;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        box-shadow: 0 2px 4px var(--shadow);
-        cursor: pointer;
-        transition: transform 0.2s;
-      }
-      .result-card:hover {
-        transform: translateY(-2px);
-      }
-
-      .img-box {
-        width: 100px;
-        height: 100px;
-        background: #000;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .img-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .info-box {
-        flex: 1;
-        padding: 12px;
-      }
-      .info-box h3 {
-        margin: 0 0 5px 0;
-        font-size: 15px;
-        color: var(--highlight);
-      }
-      .info-row {
-        font-size: 12px;
-        color: var(--text-sub);
-        margin-bottom: 3px;
-      }
-      .info-row b {
-        color: var(--text);
-        font-weight: 600;
-      }
-
-      .pagi-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 20px 0;
-        gap: 10px;
-      }
-      .pagi-select {
-        background: var(--input-bg);
-        color: var(--text);
-        border: 1px solid var(--border);
-        padding: 8px;
-        border-radius: 6px;
-        font-size: 12px;
-      }
-      .pagi-nums {
-        display: flex;
-        gap: 4px;
-        justify-content: center;
-        flex: 1;
-      }
-      .pagi-btn {
-        padding: 6px 12px;
-        background: var(--card);
-        border: 1px solid var(--border);
-        color: var(--text);
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-      }
-      .pagi-btn.active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: #fff;
-        font-weight: bold;
-      }
-
-      .footer {
-        text-align: right;
-        padding: 30px 15px 15px;
-        font-size: 10px;
-        color: var(--text-sub);
-        line-height: 1.6;
-      }
-      .footer b {
         font-weight: 700;
         color: var(--text);
       }
-
-      /* 입력/수정 모달 */
-      .modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 2000;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(2px);
+      .logo-icon { width: 32px; height: 32px; object-fit: contain; }
+      .admin-btn {
+        position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+        background: var(--card); border: 1px solid var(--border); color: var(--text);
+        width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
       }
-      .modal.show {
-        display: flex;
+      .admin-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .search-section {
+        background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px;
+        border: 1px solid var(--border); box-shadow: 0 2px 4px var(--shadow);
       }
-      .modal-content {
-        background: var(--card);
-        padding: 20px;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 360px;
-        max-height: 80vh;
-        overflow-y: auto;
-        border: 1px solid var(--border);
+      .search-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+      .form-group { position: relative; }
+      .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 4px; font-weight: 600; }
+      input { width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 6px; color: var(--text); box-sizing: border-box; }
+      input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+      input[readonly] { cursor: pointer; background-color: var(--bg); opacity: 0.9; }
+      .dropdown-list {
+        position: absolute; top: 100%; left: 0; right: 0; background: var(--card);
+        border: 1px solid var(--border); border-radius: 6px; z-index: 1000; display: none;
+        box-shadow: 0 4px 10px var(--shadow);
       }
-
-      /* 상세 보기 모달 Wrapper 추가로 수정 */
-      .detail-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.85);
-        z-index: 3000;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(5px);
-        overflow: auto; /* 작은 화면 대응 */
-        padding: 20px;
+      .dropdown-list.show { display: block; }
+      #itemL { max-height: 407px; overflow-y: auto; }
+      .dropdown-item { padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+      .dropdown-item:hover { background: var(--bg); color: var(--primary); font-weight: bold; }
+      .dropdown-item:last-child { border-bottom: none; }
+      .add-btn { background: #10b981; color: #fff; width: 100%; padding: 12px; border-radius: 8px; border: none; margin-bottom: 15px; display: none; cursor: pointer; font-weight: bold; }
+      .add-btn.show { display: block; }
+      #results { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 15px; }
+      @media (max-width: 480px) { #results { grid-template-columns: 1fr; } }
+      @media (min-width: 768px) { #results { grid-template-columns: 1fr 1fr; } }
+      .result-card {
+        background: var(--card); border-radius: 12px; display: flex; overflow: hidden;
+        border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: transform 0.2s; height: 120px; cursor: pointer;
       }
-      .detail-modal.show {
-        display: flex;
+      .result-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+      .img-box { width: 120px; background: #f8fafc; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+      .img-box img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+      .info-box {
+        flex: 1; padding: 12px 15px; display: grid; grid-template-rows: 1fr auto; align-items: center;
       }
-      /* 상세 보기 모달 Wrapper - 세련된 디자인 적용 */
-      .detail-wrapper {
-        position: relative;
-        width: 100%;
-        max-width: 750px;
-        margin: auto;
-        animation: floatUp 0.3s ease-out;
+      .info-box h3 {
+        margin: 0; font-size: 16px; color: var(--primary); font-weight: 700;
+        line-height: 1.2; font-family: 'Gowun Batang', serif;
+        display: flex; align-items: center; height: 100%;
       }
-      @keyframes floatUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      .detail-content {
-        background: var(--card);
-        border-radius: 20px; /* 더 둥글게 */
-        width: 100%;
-        min-height: 450px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        border: none;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* 깊이감 있는 그림자 */
-      }
-
-      /* 닫기 버튼: 더 세련되게 */
-      .detail-close-btn {
-        position: absolute;
-        top: -50px;
-        right: 0;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.9);
-        color: #333;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        backdrop-filter: blur(4px);
-      }
-      .detail-close-btn:hover {
-        transform: scale(1.1) rotate(90deg);
-        background: #fff;
-        color: var(--primary);
-      }
-
-      @media (min-width: 650px) {
-        .detail-content {
-          flex-direction: row;
-        }
-        .detail-img-area {
-          width: 55%;
-          height: auto;
-          min-height: 400px;
-        }
-        .detail-info-area {
-          width: 45%;
-          padding: 40px 30px;
-          overflow-y: auto;
-        }
-      }
-
-      /* 이미지 영역: 검은색 대신 부드러운 배경 */
-      .detail-img-area {
-        width: 100%;
-        height: 300px;
-        background: #f3f4f6; /* 밝은 회색 */
-        background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iI2QxZDVEQiI+PGc+PHBhdGggZD0iTTIwIDQwQTIwIDIwIDAgMSAxIDIwIDBhMjAgMjAgMCAwIDEgMCA0MHptMC0zNmMxLjk1NiAwIDMuNzkxLjM0IDUuNDU1Ljk2NmwtLjQzIDEuOTU0QTE0LjAxIDE0LjAxIDAgMCAwIDIwIDZDMTIuMjY4IDYgNiAxMi4yNjggNiAyMHMyLjM0IDcuNzM3IDYuMTcyIDEwLjUzM2wuNTEtMS45MzVBMTQuMDEgMTQuMDEgMCAwIDAgMjAgMzRjNy43MzIgMCAxNC02LjI2OCAxNC0xNFMzMi4yNjggOCAyNCA4em0wIDMyYy02LjM1MSAwLTExLjc4Ni0zLjQ0OS0xNC42ODgtOC42MzhsMi4wNy0uODMyQTExLjk5IDExLjk5IDAgMCAwIDIwIDM2YzYuNjI3IDAgMTItNS4zNzMgMTItMTJzLTUuMzczLTEyLTEyLTEyYy0zLjcwNiAwLTcuMDUgMS42OTktOS4zMDYgNC4zODJsLTEuNjEzLTEuMTk2QTEzLjk3NSAxMy45NzUgMCAwIDEgMjAgNHMxNiA3LjE2MyAxNiAxNmMwIDguODM3LTcuMTYzIDE2LTE2IDE2eiIvPjwvZz48L3N2Zz4='); /* 은은한 패턴 */
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-      }
-      /* 이미지가 있으면 패턴 위로 덮음 */
-      .detail-img-area img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain; /* 사진 비율 유지 */
-        z-index: 2;
-        transition: opacity 0.3s;
-      }
-
-      .detail-info-area {
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        background: var(--card);
-      }
-
-      /* 타이틀 디자인 */
-      .detail-title {
-        font-size: 1.6rem;
-        color: var(--text);
-        margin: 0 0 25px 0;
-        font-weight: 800;
-        line-height: 1.3;
-        letter-spacing: -0.5px;
-        border-bottom: 2px solid var(--primary);
-        padding-bottom: 15px;
-        display: inline-block;
-      }
-
-      /* 정보 행 디자인 */
-      .detail-row {
-        display: flex;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(0,0,0,0.05); /* 아주 연한 선 */
-        font-size: 15px;
-      }
-      .detail-row:last-child {
-        border-bottom: none;
-      }
-      
-      .detail-label {
-        width: 70px;
-        color: var(--text-sub);
-        font-weight: 600;
-        font-size: 0.9em;
-        flex-shrink: 0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .detail-val {
-        color: var(--text);
-        font-weight: 500;
-        flex: 1;
-        line-height: 1.5;
-      }
+      .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 15px; margin-top: 2px; }
+      .info-row { font-size: 13px; line-height: 1.4; display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+      .info-row b { font-size: 11px; color: var(--text-sub); font-weight: 500; min-width: 42px; }
+      .info-row .val { color: var(--text); font-weight: 600; }
+      .info-row.full { grid-column: span 2; border-top: 1px dashed #f1f5f9; margin-top: 0; padding-top: 4px; padding-bottom: 4px; }
+      .pagi-container { display: flex; align-items: center; justify-content: space-between; margin: 20px 0; gap: 10px; }
+      .pagi-select { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); padding: 8px; border-radius: 6px; font-size: 12px; }
+      .pagi-nums { display: flex; gap: 4px; justify-content: center; flex: 1; }
+      .pagi-btn { padding: 6px 12px; background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 4px; cursor: pointer; font-size: 12px; }
+      .pagi-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: bold; }
+      .footer { text-align: right; padding: 30px 15px 15px; font-size: 10px; color: var(--text-sub); line-height: 1.6; }
+      .footer b { font-weight: 700; color: var(--text); }
+      .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+      .modal.show { display: flex; }
+      .modal-content { background: var(--card); padding: 20px; border-radius: 12px; width: 90%; max-width: 360px; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border); }
+      .detail-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px); overflow: auto; padding: 20px; }
+      .detail-modal.show { display: flex; }
+      .detail-wrapper { position: relative; width: 100%; max-width: 750px; margin: auto; animation: floatUp 0.3s ease-out; }
+      @keyframes floatUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .detail-content { background: var(--card); border-radius: 20px; width: 100%; min-height: 450px; overflow: hidden; display: flex; flex-direction: column; border: none; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+      .detail-close-btn { position: absolute; top: -50px; right: 0; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); color: #333; border: none; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); backdrop-filter: blur(4px); }
+      .detail-close-btn:hover { transform: scale(1.1) rotate(90deg); background: #fff; color: var(--primary); }
+      @media (min-width: 650px) { .detail-content { flex-direction: row; } .detail-img-area { width: 55%; height: auto; min-height: 400px; } .detail-info-area { width: 45%; padding: 40px 30px; overflow-y: auto; } }
+      .detail-img-area { width: 100%; height: 300px; background: #f3f4f6; background-image: url("data:image/svg+xml;base64,..."); background-repeat: no-repeat; background-position: center; background-size: 60px; display: flex; align-items: center; justify-content: center; position: relative; }
+      .detail-img-area img { width: 100%; height: 100%; object-fit: contain; z-index: 2; transition: opacity 0.3s; }
+      .detail-info-area { padding: 25px; display: flex; flex-direction: column; justify-content: center; background: var(--card); }
+      .detail-title { font-size: 1.6rem; color: var(--text); margin: 0 0 25px 0; font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; border-bottom: 2px solid var(--primary); padding-bottom: 15px; display: inline-block; }
+      .detail-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 15px; }
+      .detail-row:last-child { border-bottom: none; }
+      .detail-label { width: 70px; color: var(--text-sub); font-weight: 600; font-size: 0.9em; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+      .detail-val { color: var(--text); font-weight: 500; flex: 1; line-height: 1.5; }
     </style>
   </head>
   <body>
-    <!-- 로딩 오버레이 -->
     <div id="loadingOverlay" style="position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center;">
       <div style="border:4px solid rgba(0,0,0,0.1); width:40px; height:40px; border-radius:50%; border-left-color:var(--primary); animation:spin 1s linear infinite; margin-bottom:15px;"></div>
       <div style="font-weight:bold; color:var(--text);">최신 데이터를 불러오는 중입니다...</div>
@@ -495,91 +157,50 @@
         <h3><img src="https://raw.githubusercontent.com/ngc7331-kor/DHSE-Item-Search/main/icon-v9-512.png" class="logo-icon" alt="로고"> 동해특수교육지원센터 물품검색</h3>
         <button class="admin-btn" onclick="toggleAdmin()">👤</button>
       </div>
-
-      <button class="add-btn" id="addBtn" onclick="openModal()">
-        ➕ 새 항목 추가
-      </button>
-
+      <button class="add-btn" id="addBtn" onclick="openModal()">➕ 새 항목 추가</button>
       <div class="search-section">
         <div class="search-form">
-          <div class="form-group">
-            <label>종목</label>
-            <input type="text" id="cat" placeholder="선택하세요" autocomplete="off" readonly />
-            <div class="dropdown-list" id="catL"></div>
-          </div>
-          <div class="form-group">
-            <label>영역</label>
-            <input type="text" id="area" placeholder="선택하세요" autocomplete="off" readonly />
-            <div class="dropdown-list" id="areaL"></div>
-          </div>
-          <div class="form-group">
-            <label>품명</label>
-            <input type="text" id="item" placeholder="전체/입력 (자음가능)" autocomplete="off" />
-            <div class="dropdown-list" id="itemL"></div>
-          </div>
+          <div class="form-group"><label>종목</label><input type="text" id="cat" placeholder="선택하세요" autocomplete="off" readonly /><div class="dropdown-list" id="catL"></div></div>
+          <div class="form-group"><label>영역</label><input type="text" id="area" placeholder="선택하세요" autocomplete="off" readonly /><div class="dropdown-list" id="areaL"></div></div>
+          <div class="form-group"><label>품명</label><input type="text" id="item" placeholder="전체/입력 (자음가능)" autocomplete="off" /><div class="dropdown-list" id="itemL"></div></div>
           <button onclick="currentPage = 1; performSearch();" style="background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">🔍 검색</button>
         </div>
       </div>
-
       <div id="results"></div>
-
       <div class="pagi-container" id="pagiBar" style="display: none">
         <select class="pagi-select" id="pageSize" onchange="currentPage = 1; renderUI();">
-          <option value="10">10개씩</option>
-          <option value="20">20개씩</option>
-          <option value="50">50개씩</option>
-          <option value="100">100개씩</option>
+          <option value="10">10개씩</option><option value="20">20개씩</option><option value="50">50개씩</option><option value="100">100개씩</option>
         </select>
         <div class="pagi-nums" id="pagiNums"></div>
         <div style="width: 65px"></div>
       </div>
     </div>
-
-    <div class="footer">
-      <b>© 2025 L.To. ALL RIGHTS RESERVED. POWERED BY L.To</b><br />
-      데이터는 동해특수교육지원센터의 자산 정보를 기반으로 합니다.
-    </div>
-
+    <div class="footer"><b>© 2025 L.To. ALL RIGHTS RESERVED. POWERED BY L.To</b><br />데이터는 동해특수교육지원센터의 자산 정보를 기반으로 합니다.</div>
     <div class="detail-modal" id="detailModal" onclick="if (event.target.id === 'detailModal') closeDetailModal();">
       <div class="detail-wrapper">
         <button class="detail-close-btn" onclick="closeDetailModal()">×</button>
         <div class="detail-content">
-            <div class="detail-img-area">
-            <img id="dt_img" src="" alt="물품 사진" />
-            </div>
-            <div class="detail-info-area">
+          <div class="detail-img-area"><img id="dt_img" src="" alt="물품 사진" /></div>
+          <div class="detail-info-area">
             <div class="detail-title" id="dt_name"></div>
             <div class="detail-row"><span class="detail-label">종목</span><span class="detail-val" id="dt_cat"></span></div>
             <div class="detail-row"><span class="detail-label">영역</span><span class="detail-val" id="dt_area"></span></div>
             <div class="detail-row"><span class="detail-label">순번</span><span class="detail-val" id="dt_num"></span></div>
             <div class="detail-row"><span class="detail-label">위치</span><span class="detail-val" id="dt_loc"></span></div>
             <div class="detail-row"><span class="detail-label">수량</span><span class="detail-val" id="dt_qty"></span></div>
-            </div>
+          </div>
         </div>
       </div>
     </div>
-
     <div class="modal" id="modal">
       <div class="modal-content">
         <h3 id="mTitle">항목 추가</h3>
-        <div class="form-group">
-          <label>종목</label><input type="text" id="m_cat" autocomplete="off" /><div class="dropdown-list" id="mCatL"></div>
-        </div>
-        <div class="form-group" style="margin-top: 10px">
-          <label>영역</label><input type="text" id="m_area" autocomplete="off" /><div class="dropdown-list" id="mAreaL"></div>
-        </div>
-        <div class="form-group" style="margin-top: 10px">
-          <label>순번</label><input type="text" id="m_num" readonly style="background: rgba(0, 0, 0, 0.1)" />
-        </div>
-        <div class="form-group" style="margin-top: 10px">
-          <label>품명</label><input type="text" id="m_item" />
-        </div>
-        <div class="form-group" style="margin-top: 10px">
-          <label>수량</label><input type="text" id="m_qty" />
-        </div>
-        <div class="form-group" style="margin-top: 10px">
-          <label>위치</label><input type="text" id="m_loc" />
-        </div>
+        <div class="form-group"><label>종목</label><input type="text" id="m_cat" autocomplete="off" /><div class="dropdown-list" id="mCatL"></div></div>
+        <div class="form-group" style="margin-top: 10px"><label>영역</label><input type="text" id="m_area" autocomplete="off" /><div class="dropdown-list" id="mAreaL"></div></div>
+        <div class="form-group" style="margin-top: 10px"><label>순번</label><input type="text" id="m_num" readonly style="background: rgba(0, 0, 0, 0.1)" /></div>
+        <div class="form-group" style="margin-top: 10px"><label>품명</label><input type="text" id="m_item" /></div>
+        <div class="form-group" style="margin-top: 10px"><label>수량</label><input type="text" id="m_qty" /></div>
+        <div class="form-group" style="margin-top: 10px"><label>위치</label><input type="text" id="m_loc" /></div>
         <input type="file" id="f_input" hidden onchange="previewImg(event)" />
         <button onclick="document.getElementById('f_input').click()" style="width: 100%; padding: 10px; margin: 10px 0; background: #f59e0b; border: none; border-radius: 6px; color: #fff; cursor: pointer;">📷 사진 선택</button>
         <img id="m_prev" style="width: 100%; display: none; border-radius: 6px; margin-bottom: 10px;" />
@@ -589,9 +210,7 @@
         </div>
       </div>
     </div>
-
     <script>
-      /* js/data-manager.js 통합 */
       const API_URL = 'https://script.google.com/macros/s/AKfycbxxSnINrMCjHbQNhndAn6nxbcVVljtszQeymF4yHwK3SmoAORTP5_pN0NooCrZDX8efGg/exec';
       class DataManager {
         constructor() { this.data = []; }
@@ -657,12 +276,9 @@
         }
       }
       const db = new DataManager();
-
-      /* js/app.js 통합 */
       let isAdmin = false; 
       let cache = { cats: [], areas: {}, items: {}, allAreas: [], allItems: [] };
       let fullData = []; let currentRenderedData = []; let currentPage = 1; let currentMode = 'add'; let editD = null; let isInitialLoad = true;
-
       function getJamos(str) {
         const cho = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
         const jung = ["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
@@ -689,9 +305,7 @@
         for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
         return array;
       }
-
       window.onload = () => { preload(); setupDropdowns(); window.addEventListener('data-updated', () => { preload(); }); };
-
       async function preload() {
         try {
           const data = await db.loadData();
@@ -709,7 +323,6 @@
         } catch (e) { console.error("Preload Failed:", e); }
         finally { const loader = document.getElementById('loadingOverlay'); if(loader) loader.style.display = 'none'; }
       }
-
       function setupDropdowns() {
         const bind = (id, lid, dataFn) => {
           const el = document.getElementById(id); const listEl = document.getElementById(lid); const isStrict = el.hasAttribute('readonly');
@@ -743,7 +356,6 @@
         bind('m_area', 'mAreaL', () => cache.allAreas.filter(a => a !== '전체'));
         document.addEventListener('click', (e) => { if (!e.target.closest('.form-group')) document.querySelectorAll('.dropdown-list').forEach(x => x.classList.remove('show')); });
       }
-
       function getInstantImgUrl(url) {
         if (!url) return '';
         try {
@@ -754,7 +366,6 @@
         } catch(e) {}
         return url;
       }
-
       function performSearch() {
         isInitialLoad = false;
         const c = document.getElementById('cat').value || '전체'; const a = document.getElementById('area').value || '전체'; const i = document.getElementById('item').value || '전체';
@@ -762,7 +373,6 @@
         fullData = shuffleArray(data.map(d => ({ ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' })));
         renderUI();
       }
-
       function renderUI() {
         const res = document.getElementById('results'); const bar = document.getElementById('pagiBar');
         if (isInitialLoad) { res.innerHTML = ''; bar.style.display = 'none'; return; }
@@ -774,7 +384,7 @@
         currentRenderedData.forEach((d, idx) => {
           const card = document.createElement('div'); card.className = 'result-card'; card.onclick = () => showDetailModal(idx);
           const adminHtml = isAdmin ? `<div style="margin-top:8px"><button onclick="event.stopPropagation(); editItem(${idx})" style="font-size:11px; padding:3px 7px;">수정</button><button onclick="event.stopPropagation(); deleteItem(${idx})" style="font-size:11px; padding:3px 7px; color:red">삭제</button></div>` : '';
-          card.innerHTML = `<div class="img-box"><img src="${getInstantImgUrl(d.사진)}" loading="lazy" onerror="this.src='https://via.placeholder.com/100?text=No+Image'"></div><div class="info-box"><h3>${d.품명}</h3><div class="info-row"><b>종목:</b> ${d.종목} | <b>영역:</b> ${d.영역}</div><div class="info-row"><b>순번:</b> ${d.순번}</div><div class="info-row"><b>위치:</b> ${d.위치} | <b>수량:</b> ${d.수량}</div>${adminHtml}</div>`;
+          card.innerHTML = `<div class="img-box"><img src="${getInstantImgUrl(d.사진)}" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/ngc7331-kor/DHSE-Item-Search/main/icon-v9-512.png'"></div><div class="info-box"><h3>${d.품명}</h3><div class="info-grid"><div class="info-row"><b>종목</b><span class="val">${d.종목}</span></div><div class="info-row"><b>영역</b><span class="val">${d.영역}</span></div><div class="info-row"><b>순번</b><span class="val">${d.순번}</span></div><div class="info-row"><b>수량</b><span class="val">${d.수량}</span></div><div class="info-row full"><b>위치</b><span class="val">${d.위치}</span></div></div>${adminHtml}</div>`;
           res.appendChild(card);
         });
         bar.style.display = 'flex'; const nums = document.getElementById('pagiNums'); nums.innerHTML = '';
@@ -783,36 +393,43 @@
         for (let p = startPage; p <= endPage; p++) { nums.innerHTML += `<button class="pagi-btn ${p===currentPage?'active':''}" onclick="changeP(${p})">${p}</button>`; }
         if (endPage < totalPages) nums.innerHTML += `<button class="pagi-btn" onclick="changeP(${endPage+1})">다음</button>`;
       }
-
       function showDetailModal(idx) {
         const d = currentRenderedData[idx]; if (!d) return;
-        document.getElementById('dt_img').src = getInstantImgUrl(d.사진); document.getElementById('dt_name').textContent = d.품명; document.getElementById('dt_cat').textContent = d.종목; document.getElementById('dt_area').textContent = d.영역; document.getElementById('dt_num').textContent = d.순번; document.getElementById('dt_loc').textContent = d.위치; document.getElementById('dt_qty').textContent = d.수량;
+        document.getElementById('dt_img').src = getInstantImgUrl(d.사진);
+        document.getElementById('dt_name').textContent = d.품명;
+        document.getElementById('dt_cat').textContent = d.종목;
+        document.getElementById('dt_area').textContent = d.영역;
+        document.getElementById('dt_num').textContent = d.순번;
+        document.getElementById('dt_loc').textContent = d.위치;
+        document.getElementById('dt_qty').textContent = d.수량;
         document.getElementById('detailModal').classList.add('show');
       }
       function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); }
       function changeP(p) { currentPage = p; renderUI(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
       function toggleAdmin() { isAdmin = !isAdmin; document.querySelector('.admin-btn').classList.toggle('active'); document.getElementById('addBtn').classList.toggle('show'); renderUI(); }
-      function openModal() { currentMode='add'; document.getElementById('mTitle').textContent = '항목 추가'; ['m_cat','m_area','m_num','m_item','m_qty','m_loc'].forEach(id => document.getElementById(id).value = ''); document.getElementById('m_prev').style.display = 'none'; document.getElementById('f_input').value = ''; document.getElementById('modal').classList.add('show'); }
+      function openModal() { currentMode='add'; document.getElementById('mTitle').textContent = '항목 추가'; ['m_cat','m_area','m_num','m_item','m_qty','m_loc'].forEach(id => document.getElementById(id).value = ''); document.getElementById('m_prev').style.display = 'none'; document.getElementById('modal').classList.add('show'); }
       function closeModal() { document.getElementById('modal').classList.remove('show'); }
-      function editItem(idx) {
+      function editItem(idx) { 
         const d = currentRenderedData[idx]; if (!d) return;
         currentMode = 'edit'; editD = d; document.getElementById('mTitle').textContent = '항목 수정'; document.getElementById('m_cat').value = d.종목; document.getElementById('m_area').value = d.영역; document.getElementById('m_num').value = d.순번; document.getElementById('m_item').value = d.품명; document.getElementById('m_qty').value = d.수량; document.getElementById('m_loc').value = d.위치;
         const img = getInstantImgUrl(d.사진); if(img) { document.getElementById('m_prev').src = img; document.getElementById('m_prev').style.display = 'block'; } else { document.getElementById('m_prev').style.display = 'none'; }
         document.getElementById('modal').classList.add('show');
       }
-      function previewImg(e) {
+      function previewImg(e) { 
         const file = e.target.files[0], reader = new FileReader();
-        reader.onload = (ev) => {
-          const img = new Image(); img.onload = () => {
+        reader.onload = (ev) => { 
+          const img = new Image(); 
+          img.onload = () => { 
             const cvs = document.createElement('canvas'); const maxDim = 600; const s = Math.min(maxDim/img.width, maxDim/img.height, 1);
-            cvs.width = img.width * s; cvs.height = img.height * s; const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-            const resData = cvs.toDataURL('image/jpeg', 0.8); document.getElementById('m_prev').src = resData; document.getElementById('m_prev').style.display = 'block';
-          };
-          img.src = ev.target.result;
-        };
+            cvs.width = img.width * s; cvs.height = img.height * s;
+            const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+            const resData = cvs.toDataURL('image/jpeg', 0.8); document.getElementById('m_prev').src = resData; document.getElementById('m_prev').style.display = 'block'; 
+          }; 
+          img.src = ev.target.result; 
+        }; 
         if(file) reader.readAsDataURL(file);
       }
-      async function saveData() {
+      async function saveData() { 
         const obj = { 종목: document.getElementById('m_cat').value, 영역: document.getElementById('m_area').value, 순번: document.getElementById('m_num').value, 품명: document.getElementById('m_item').value, 수량: document.getElementById('m_qty').value, 위치: document.getElementById('m_loc').value, 사진: document.getElementById('m_prev').style.display==='block' ? document.getElementById('m_prev').src : '' };
         let res = currentMode === 'add' ? await db.addData(obj) : await db.updateData(editD, obj);
         if (res.success) { alert(res.message); closeModal(); preload(); } else { alert(res.message); }
