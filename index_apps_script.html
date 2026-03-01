@@ -92,7 +92,7 @@
           <div class="form-group"><label>종목</label><input type="text" id="cat" placeholder="선택하세요" autocomplete="off" readonly /><div class="dropdown-list" id="catL"></div></div>
           <div class="form-group"><label>영역</label><input type="text" id="area" placeholder="선택하세요" autocomplete="off" readonly /><div class="dropdown-list" id="areaL"></div></div>
           <div class="form-group"><label>품명</label><input type="text" id="item" placeholder="전체/입력 (자음가능)" autocomplete="off" /><div class="dropdown-list" id="itemL"></div></div>
-          <button onclick="currentPage = 1; performSearch();" style="background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">🔍 검색</button>
+          <button type="button" id="searchBtn" onclick="performSearch();" style="background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">🔍 검색</button>
         </div>
       </div>
       <div id="results"></div>
@@ -136,7 +136,6 @@
             const result = await response.json();
             if (result.success && Array.isArray(result.data)) {
               this.data = result.data; localStorage.setItem('appData', JSON.stringify(this.data));
-              window.dispatchEvent(new CustomEvent('data-updated'));
               return this.data;
             } else { throw new Error(result.message || '데이터 로드 실패'); }
           } catch (e) { return this.data || []; }
@@ -151,6 +150,14 @@
             const matchItem = (i === '전체' || !i) ? true : isMatch(dataItemName, i);
             return matchCat && matchArea && matchItem;
           });
+        }
+        getNextNumber(category) {
+          const prefix = category.substring(0, 2);
+          const filtered = (this.data || []).filter(d => (d.순번 || '').startsWith(prefix));
+          if (filtered.length === 0) return prefix + "-001";
+          const numbers = filtered.map(d => { const parts = d.순번.split('-'); return parts.length > 1 ? parseInt(parts[1], 10) : 0; });
+          const nextNum = (Math.max(...numbers) + 1).toString().padStart(3, '0');
+          return prefix + "-" + nextNum;
         }
       }
       const db = new DataManager();
@@ -176,9 +183,8 @@
       }
       function customSort(a, b) { if (a === '미입력') return 1; if (b === '미입력') return -1; if (a === '전체') return -1; if (b === '전체') return 1; return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true }); }
       function shuffleArray(array) { if(!Array.isArray(array)) return []; let newArr = [...array]; for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; } return newArr; }
-      window.onload = () => { preload(); setupDropdowns(); window.addEventListener('data-updated', () => { preload(); }); };
+      window.onload = () => { preload(); setupDropdowns(); };
       async function preload() {
-        console.log("Preload Start");
         const loader = document.getElementById('loadingOverlay');
         try {
           const data = await db.loadData();
@@ -193,7 +199,6 @@
             cache.areas[c].forEach(a => { cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort); });
           });
           fullData = shuffleArray(cleanData); isInitialLoad = false; renderUI();
-          console.log("Preload Success");
         } catch (e) { console.error("Preload Error", e); }
         finally { if(loader) loader.style.display = 'none'; }
       }
@@ -231,7 +236,7 @@
         return url;
       }
       function performSearch() {
-        isInitialLoad = false;
+        currentPage = 1; isInitialLoad = false;
         const c = document.getElementById('cat').value || '전체'; const a = document.getElementById('area').value || '전체'; const i = document.getElementById('item').value || '전체';
         const data = db.searchData(c, a, i);
         const order = { '교재교구': 1, '보조기기': 2, '진단평가도구': 3 };
@@ -241,7 +246,7 @@
         } else {
           fullData = shuffleArray(data.map(d => ({ ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' })));
         }
-        currentPage = 1; renderUI(); alert("검색이 완료되었습니다. (검색 결과: " + fullData.length + "건)");
+        renderUI(); alert("검색이 완료되었습니다. (검색 결과: " + fullData.length + "건)");
       }
       function renderUI() {
         const res = document.getElementById('results'); const bar = document.getElementById('pagiBar'); if(!res || !bar) return;
