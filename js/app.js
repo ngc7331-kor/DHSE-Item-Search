@@ -253,6 +253,7 @@ function performSearch() {
   }
   
   renderUI();
+  alert("검색이 완료되었습니다. (검색 결과: " + fullData.length + "건)");
 }
 
 function renderUI() {
