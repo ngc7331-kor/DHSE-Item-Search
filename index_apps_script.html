@@ -73,6 +73,13 @@
       .detail-row:last-child { border-bottom: none; }
       .detail-label { width: 70px; color: var(--text-sub); font-weight: 600; font-size: 0.9em; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
       .detail-val { color: var(--text); font-weight: 500; flex: 1; line-height: 1.5; }
+      .search-msg-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+      .search-msg-modal.show { display: flex; }
+      .search-msg-content { background: var(--card); padding: 30px; border-radius: 16px; text-align: center; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-width: 300px; width: 80%; }
+      .search-msg-content h4 { margin: 0 0 15px 0; color: var(--primary); font-family: 'Gowun Batang', serif; font-size: 1.2rem; }
+      .search-msg-content p { margin: 0 0 20px 0; font-size: 15px; color: var(--text); line-height: 1.5; }
+      .search-msg-content button { background: var(--primary); color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+      .install-btn { position: fixed; bottom: 20px; left: 20px; background: #f59e0b; color: #fff; border: none; border-radius: 50px; padding: 10px 20px; font-weight: bold; font-size: 13px; display: none; align-items: center; gap: 8px; cursor: pointer; z-index: 4000; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
     </style>
   </head>
   <body>
@@ -105,6 +112,14 @@
       </div>
     </div>
     <div class="footer"><b>© 2025 L.To. ALL RIGHTS RESERVED. POWERED BY L.To</b><br />데이터는 동해특수교육지원센터의 자산 정보를 기반으로 합니다.</div>
+    <button id="installBtn" class="install-btn">📲 앱 설치하기</button>
+    <div class="search-msg-modal" id="searchMsgModal">
+      <div class="search-msg-content">
+        <h4>검색 완료</h4>
+        <p id="searchMsgText"></p>
+        <button onclick="closeSearchMsg()">확인</button>
+      </div>
+    </div>
     <div class="detail-modal" id="detailModal" onclick="if (event.target.id === 'detailModal') closeDetailModal();">
       <div class="detail-wrapper">
         <button class="detail-close-btn" onclick="closeDetailModal()">×</button>
@@ -163,6 +178,8 @@
       const db = new DataManager();
       let isAdmin = false; let cache = { cats: [], areas: {}, items: {}, allAreas: [], allItems: [] };
       let fullData = []; let currentRenderedData = []; let currentPage = 1; let isInitialLoad = true;
+      let isPreloading = false; let deferredPrompt;
+
       function getJamos(str) {
         if(!str) return "";
         const cho = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
@@ -183,19 +200,29 @@
       }
       function customSort(a, b) { if (a === '미입력') return 1; if (b === '미입력') return -1; if (a === '전체') return -1; if (b === '전체') return 1; return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true }); }
       function shuffleArray(array) { if(!Array.isArray(array)) return []; let newArr = [...array]; for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; } return newArr; }
+      
       window.onload = () => {
+        console.log("App Loaded");
         const btn = document.getElementById('searchBtn');
         if (btn) {
-          btn.addEventListener('click', (e) => {
-            console.log("Search Button Clicked");
-            performSearch();
-          });
-          console.log("Search Button Listener Bound");
+          btn.addEventListener('click', (e) => { performSearch(); });
         }
+        
+        const installBtn = document.getElementById('installBtn');
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if(installBtn) installBtn.style.display = 'flex'; });
+        if(installBtn) {
+          installBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { deferredPrompt = null; installBtn.style.display = 'none'; } } });
+        }
+        
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err)); }
+
         preload(); 
         setupDropdowns();
       };
+
       async function preload() {
+        if (isPreloading) return; isPreloading = true;
+        console.log("Preload started");
         const loader = document.getElementById('loadingOverlay');
         try {
           const data = await db.loadData();
@@ -210,8 +237,9 @@
             cache.areas[c].forEach(a => { cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort); });
           });
           fullData = shuffleArray(cleanData); isInitialLoad = false; renderUI();
+          console.log("Preload finished");
         } catch (e) { console.error("Preload Error", e); }
-        finally { if(loader) loader.style.display = 'none'; }
+        finally { if(loader) loader.style.display = 'none'; isPreloading = false; }
       }
       function setupDropdowns() {
         const bind = (id, lid, dataFn) => {
@@ -257,8 +285,12 @@
         } else {
           fullData = shuffleArray(data.map(d => ({ ...d, 종목: d.종목 || '미입력', 영역: d.영역 || '미입력', 품명: d.품명 || '미입력' })));
         }
-        renderUI(); alert("검색이 완료되었습니다. (검색 결과: " + fullData.length + "건)");
+        renderUI(); 
+        showSearchMsg("검색이 완료되었습니다.<br><b>(검색 결과: " + fullData.length + "건)</b>");
       }
+      function showSearchMsg(txt) { const m = document.getElementById('searchMsgModal'); document.getElementById('searchMsgText').innerHTML = txt; m.classList.add('show'); }
+      function closeSearchMsg() { document.getElementById('searchMsgModal').classList.remove('show'); }
+
       function renderUI() {
         const res = document.getElementById('results'); const bar = document.getElementById('pagiBar'); if(!res || !bar) return;
         if (isInitialLoad) { res.innerHTML = ''; bar.style.display = 'none'; return; }

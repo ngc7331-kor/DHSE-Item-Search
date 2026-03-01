@@ -66,20 +66,30 @@ function isMatch(text, query) {
 function customSort(a, b) { if (a === '미입력') return 1; if (b === '미입력') return -1; if (a === '전체') return -1; if (b === '전체') return 1; return a.toString().localeCompare(b.toString(), 'ko-KR', { numeric: true }); }
 function shuffleArray(array) { if(!Array.isArray(array)) return []; let newArr = [...array]; for (let i = newArr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArr[i], newArr[j]] = [newArr[j], newArr[i]]; } return newArr; }
 
+let isPreloading = false; let deferredPrompt;
+
 window.onload = () => {
+  console.log("App Loaded");
   const btn = document.getElementById('searchBtn');
   if (btn) {
-    btn.addEventListener('click', (e) => {
-      console.log("Search Button Clicked");
-      performSearch();
-    });
-    console.log("Search Button Listener Bound");
+    btn.addEventListener('click', (e) => { performSearch(); });
   }
+  
+  const installBtn = document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if(installBtn) installBtn.style.display = 'flex'; });
+  if(installBtn) {
+    installBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { deferredPrompt = null; installBtn.style.display = 'none'; } } });
+  }
+  
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err)); }
+
   preload(); 
   setupDropdowns();
 };
 
 async function preload() {
+  if (isPreloading) return; isPreloading = true;
+  console.log("Preload started");
   const loader = document.getElementById('loadingOverlay');
   try {
     const data = await db.loadData();
@@ -94,8 +104,9 @@ async function preload() {
       cache.areas[c].forEach(a => { cache.items[c+'_'+a] = ['전체', ...new Set(cD.filter(d => d.영역 === a).map(d => d.품명))].sort(customSort); });
     });
     fullData = shuffleArray(cleanData); isInitialLoad = false; renderUI();
+    console.log("Preload finished");
   } catch (e) { console.error("Preload Error", e); }
-  finally { if(loader) loader.style.display = 'none'; }
+  finally { if(loader) loader.style.display = 'none'; isPreloading = false; }
 }
 
 function setupDropdowns() {
